@@ -15,9 +15,8 @@ jobs:
 
       - name: Authenticate with JFrog
         run: |
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" > ~/.npmrc
-          echo "_auth=${{ secrets.JFROG_AUTH_TOKEN }}" >> ~/.npmrc
-          echo "always-auth=true" >> ~/.npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
           echo "email=pablo.sanchez2@thomsonreuters.com" >> ~/.npmrc
 
       - name: Install dependencies
