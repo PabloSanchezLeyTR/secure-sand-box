@@ -18,6 +18,7 @@ jobs:
           echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
           echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
           echo "email=pablo.sanchez2@thomsonreuters.com" >> ~/.npmrc
+          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
