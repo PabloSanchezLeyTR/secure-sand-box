@@ -16,12 +16,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Authenticate with npm
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+
+      - name: Authenticate with JFrog
+        run: |
+          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" > ~/.npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_authToken=${{ secrets.JFROG_TOKEN }}" >> ~/.npmrc
+
 
       - name: Install dependencies
+        working-directory: ./pablo-sand-box
         run: npm install
 
       - name: Run ESLint
+        working-directory: ./pablo-sand-box
         run: npm run lint
-
