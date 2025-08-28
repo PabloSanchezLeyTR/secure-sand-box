@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: '18'
 
+
+      - name: Authenticate with npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install
