@@ -44,6 +44,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      
+      - name: Verifica archivos y configuración
+        run: |
+          echo "Contenido del directorio actual:"
+          ls -la
+          echo "Contenido del archivo .axe-linter.yml:"
+          cat .axe-linter.yml || echo "Archivo no encontrado"
+          echo "Archivos HTML detectados:"
+          find . -name "*.html"
+
+
       - name: Run axe-linter
         uses: dequelabs/axe-linter-action@v1
         with:
