@@ -1,9 +1,13 @@
-name: Pull Request Validation EsLint
+name: Pull Request Validation
 
 on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   lint:
@@ -24,7 +28,6 @@ jobs:
         working-directory: ./pablo-sand-box
         run: npm install
 
-        
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
         run: npm install --save-dev eslint
@@ -32,3 +35,16 @@ jobs:
       - name: Run lint
         working-directory: ./pablo-sand-box
         run: npm run lint
+
+  axe-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run axe-linter
+        uses: dequelabs/axe-linter-action@v1
+        with:
+          api_key: ${{ secrets.AXE_LINTER_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
