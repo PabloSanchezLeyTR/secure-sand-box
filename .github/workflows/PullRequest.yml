@@ -50,5 +50,6 @@ jobs:
           artifactory_user: ${{ secrets.NPM_EMAIL }}
           artifactory_token: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
           axe_linter_license_key: ${{ secrets.AXE_LINTER_LICENSE_KEY }} # TR Org Level GitHub Secret # No need for you to add this again.
+          asset_id: "test"
           application_name: "Pablo SandBox"
           github_token: ${{ secrets.GITHUB_TOKEN }}
