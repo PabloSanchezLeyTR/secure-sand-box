@@ -1,0 +1,7 @@
+extends: axe:recommended
+
+files:
+  - "**/*.html"
+  - "**/*.jsx"
+  - "**/*.tsx"
+  - "**/*.vue"
