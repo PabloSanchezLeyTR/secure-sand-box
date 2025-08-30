@@ -14,4 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Echo test
-        run: echo "✅ GitHub Actions está funcionando correctamente"
+        run: echo "✅ GitHub Actions está funcionando correctamentes"
