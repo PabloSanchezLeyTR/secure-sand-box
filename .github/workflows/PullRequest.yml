@@ -20,7 +20,7 @@ jobs:
       - name: Debug de secretos (sin mostrar valores)
         run: |
           echo "¿JFROG_AUTH_TOKEN está definido?: ${{ secrets.JFROG_AUTH_TOKEN != '' }}"
-          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_AUTH != '' }}"
+          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
           echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
 
       - name: Generar archivo .npmrc dinámico
@@ -36,13 +36,20 @@ jobs:
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
 
           echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_AUTH }}" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_API_KEY }}" >> ~/.npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
 
-      - name: Instalar dependencias
+      - name: Verificar contenido de package.json
         working-directory: ./pablo-sand-box
-        run: npm install
+        run: |
+          echo "Contenido de package.json:"
+          cat package.json || echo "Archivo no encontrado"
+
+      - name: Instalar dependencias (con debug)
+        working-directory: ./pablo-sand-box
+        run: |
+          npm install || (echo "❌ npm install falló" && exit 1)
 
       - name: Asegurar ESLint instalado
         working-directory: ./pablo-sand-box
@@ -51,7 +58,6 @@ jobs:
       - name: Ejecutar lint
         working-directory: ./pablo-sand-box
         run: npm run lint
-
   axe-lint:
     runs-on: ubuntu-latest
 
