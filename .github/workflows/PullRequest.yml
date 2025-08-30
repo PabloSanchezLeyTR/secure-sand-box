@@ -17,6 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug de secretos (sin mostrar valores)
+        run: |
+          echo "¿JFROG_AUTH_TOKEN está definido?: ${{ secrets.JFROG_AUTH_TOKEN != '' }}"
+          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_AUTH != '' }}"
+          echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
+
       - name: Generar archivo .npmrc dinámico
         run: |
           echo "@208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
@@ -53,6 +59,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug de secretos (sin mostrar valores)
+        run: |
+          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_AUTH != '' }}"
+          echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
+          echo "¿AXE_LINTER_API_KEY está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
+
       - name: Generar archivo .npmrc dinámico
         run: |
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm
+          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_AUTH }}" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
+
+      - name: Verificar archivos y configuración
+        run: |
+          echo "Contenido del directorio actual:"
+          ls -la
+          echo "Contenido del archivo .axe-linter.yml:"
+          cat .axe-linter.yml || echo "Archivo no encontrado"
+          echo "Archivos HTML detectados:"
+          find . -name "*.html"
+
+      - name: Ejecutar axe-linter
+        uses: dequelabs/axe-linter-action@v1
+        with:
+          api_key: ${{ secrets.AXE_LINTER_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
