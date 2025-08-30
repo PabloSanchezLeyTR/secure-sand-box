@@ -1,17 +1,35 @@
-name: Test GitHub Actions
+name: Pull Request Validation EsLint
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Echo test
-        run: echo "✅ GitHub Actions está funcionando correctamentes"
+      - name: Authenticate with JFrog
+        run: |
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
+          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
+          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
+
+      - name: Install dependencies
+        working-directory: ./pablo-sand-box
+        run: npm install
+
+        
+      - name: Ensure ESLint is installed
+        working-directory: ./pablo-sand-box
+        run: npm install --save-dev eslint --registry=https://registry.npmjs.org/
+        
+
+      - name: Run lint
+        working-directory: ./pablo-sand-box
+        run: npm run lint
