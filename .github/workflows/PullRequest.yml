@@ -1,4 +1,4 @@
-name: Lint Check (Debug)
+name: Lint Check (Minimal)
 
 on:
   pull_request:
@@ -10,31 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install
 
-      - name: Mostrar archivos en el proyecto
+      - name: Run ESLint
         working-directory: ./pablo-sand-box
-        run: |
-          echo "Archivos en el proyecto:"
-          find . -type f
-
-      - name: Verificar ESLint instalado
-        working-directory: ./pablo-sand-box
-        run: npx eslint -v
-
-      - name: Ejecutar ESLint con salida clara
-        working-directory: ./pablo-sand-box
-        run: |
-          echo "Linting files..."
-          npx eslint . --ext .ts,.html --max-warnings=0 --format=stylish
-
+        run: npx eslint . --ext .ts,.html --max-warnings=0
