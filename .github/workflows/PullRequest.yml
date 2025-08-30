@@ -61,14 +61,14 @@ jobs:
 
       - name: Debug de secretos (sin mostrar valores)
         run: |
-          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_AUTH != '' }}"
+          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
           echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
           echo "¿AXE_LINTER_API_KEY está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
 
       - name: Generar archivo .npmrc dinámico
         run: |
           echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_AUTH }}" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_API_KEY }}" >> ~/.npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
 
