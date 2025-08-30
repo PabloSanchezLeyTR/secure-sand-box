@@ -27,7 +27,8 @@ jobs:
         
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
-        run: npm install --save-dev eslint
+        run: npm install --save-dev eslint --registry=https://registry.npmjs.org/
+        
 
       - name: Run lint
         working-directory: ./pablo-sand-box
