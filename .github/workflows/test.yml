@@ -3,7 +3,7 @@ name: Test GitHub Actions
 on:
   push:
     branches:
-      - main
+      - feat-axe-linter-add
 
 jobs:
   test:
