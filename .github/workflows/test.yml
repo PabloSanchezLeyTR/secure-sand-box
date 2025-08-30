@@ -1,7 +1,7 @@
-name: Test GitHub Actions
+name: Test desde PR externo
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
 
@@ -14,9 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Echo test
-        run: echo "✅ GitHub Actions está funcionando correctamente"
-
-      - name: Usar token de GitHub
-        run: echo "Token disponible"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "✅ Workflow ejecutado desde pull_request_target"
