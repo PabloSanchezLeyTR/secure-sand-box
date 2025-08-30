@@ -1,4 +1,4 @@
-name: Pull Request Validation EsLint
+name: Lint Check (Test)
 
 on:
   pull_request:
@@ -10,25 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Authenticate with JFrog
-        run: |
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Install dependencies
-        working-directory: ./pablo-sand-box
-        run: npm install
+      - name: Print working directory
+        run: pwd
 
-        
-      - name: Ensure ESLint is installed
-        working-directory: ./pablo-sand-box
-        run: npm install --save-dev eslint
+      - name: List files
+        run: ls -la
 
-      - name: Run lint
-        working-directory: ./pablo-sand-box
-        run: npm run lint
+      - name: Run ESLint
+        run: npx eslint . --ext .ts,.html
