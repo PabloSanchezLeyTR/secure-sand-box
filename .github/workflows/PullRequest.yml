@@ -37,6 +37,7 @@ jobs:
         run: npm run lint
 
  
+  
   axe-lint:
     runs-on: ubuntu-latest
 
@@ -44,8 +45,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      
-      - name: Verifica archivos y configuración
+      - name: Configurar registro npm para Deque
+        run: npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+
+      - name: Verificar archivos y configuración
         run: |
           echo "Contenido del directorio actual:"
           ls -la
@@ -54,10 +57,10 @@ jobs:
           echo "Archivos HTML detectados:"
           find . -name "*.html"
 
-
-      - name: Run axe-linter
+      - name: Ejecutar axe-linter
         uses: dequelabs/axe-linter-action@v1
         with:
           api_key: ${{ secrets.AXE_LINTER_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
 
