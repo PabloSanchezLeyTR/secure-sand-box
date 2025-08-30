@@ -49,12 +49,11 @@ jobs:
 
       - name: Verificar archivos y configuración
         run: |
-          echo "Contenido del directorio actual:"
-          ls -la
-          echo "Contenido del archivo .axe-linter.yml:"
-          cat .axe-linter.yml || echo "Archivo no encontrado"
-          echo "Archivos HTML detectados:"
-          find . -name "*.html"
+          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_AUTH }}" >> ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
+
+
 
       - name: Ejecutar axe-linter
         uses: dequelabs/axe-linter-action@v1
