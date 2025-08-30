@@ -32,8 +32,9 @@ jobs:
         working-directory: ./pablo-sand-box
         run: npx eslint -v
 
-      - name: Ejecutar ESLint con salida completa
+      - name: Ejecutar ESLint con salida clara
         working-directory: ./pablo-sand-box
         run: |
           echo "Linting files..."
-          npx eslint . --ext .ts,.html --max-warnings=0 --debug || echo "ESLint falló pero mostramos el error"
+          npx eslint . --ext .ts,.html --max-warnings=0 --format=stylish
+
