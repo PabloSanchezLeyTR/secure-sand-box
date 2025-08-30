@@ -1,3 +1,4 @@
+
 # .github/workflows/lint.yml
 name: Lint Check
 
@@ -20,9 +21,10 @@ jobs:
           node-version: '18'
 
       - name: Configure JFrog registry
-        if: secrets.JFROG_AUTH_TOKEN != ''
         run: |
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          if [ -n "${{ secrets.JFROG_AUTH_TOKEN }}" ]; then
+            echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          fi
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
