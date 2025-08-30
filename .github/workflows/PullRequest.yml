@@ -1,37 +1,16 @@
-name: Pull Request Validation
+name: Test Workflow
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verificar versión de Node
+      - name: Verificar Node
         run: node -v
-
-      - name: Verificar contenido de package.json
-        working-directory: ./pablo-sand-box
-        run: cat package.json || echo "❌ package.json no encontrado"
-
-      - name: Instalar ESLint desde registro público con debug
-        working-directory: ./pablo-sand-box
-        run: |
-          npm install --save-dev eslint --registry=https://registry.npmjs.org/ || (
-            echo "❌ Falló la instalación de ESLint"
-            exit 1
-          )
-
-      - name: Ejecutar lint
-        working-directory: ./pablo-sand-box
-        run: npm run lint
