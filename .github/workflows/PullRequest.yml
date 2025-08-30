@@ -1,4 +1,4 @@
-name: Lint Check (Minimal)
+name: Lint Check (Debug)
 
 on:
   pull_request:
@@ -18,10 +18,28 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
+      - name: Mostrar archivos en el proyecto
         working-directory: ./pablo-sand-box
-        run: npm install
+        run: |
+          echo "Archivos en el proyecto:"
+          find . -type f
 
-      - name: Run ESLint
+      - name: Verificar ESLint instalado
         working-directory: ./pablo-sand-box
-        run: npx eslint . --ext .ts,.html --max-warnings=0
+        run: |
+          echo "Versión de ESLint:"
+          npx eslint -v
+        continue-on-error: true
+
+      - name: Ejecutar ESLint con salida clara
+        working-directory: ./pablo-sand-box
+        run: |
+          echo "Linting files..."
+          npx eslint . --ext .ts,.html --max-warnings=0 --format=stylish
+        continue-on-error: true
+
+      - name: Mostrar código de salida de ESLint
+        working-directory: ./pablo-sand-box
+        run: |
+          npx eslint . --ext .ts,.html --max-warnings=0 --format=stylish
+          echo "Código de salida: $?"
