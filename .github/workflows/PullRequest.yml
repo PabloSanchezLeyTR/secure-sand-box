@@ -1,4 +1,4 @@
-name: Lint Check (Sin JFrog)
+name: Lint Check (Sin JFrog, sin lockfile)
 
 on:
   pull_request:
@@ -17,6 +17,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Remove lockfile
+        working-directory: ./pablo-sand-box
+        run: rm -f package-lock.json
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
