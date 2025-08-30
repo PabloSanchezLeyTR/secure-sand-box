@@ -1,3 +1,5 @@
+// ESLint error: variable declarada pero no usada
+const unusedVariable = 123;
 import { Component } from '@angular/core';
 
 @Component({
