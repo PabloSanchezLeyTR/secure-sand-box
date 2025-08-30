@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Test GitHub Actions
 
 on:
   push:
@@ -8,9 +8,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Verificar Node
+      - name: Verificar versión de Node
         run: node -v
+
+      - name: Verificar versión de npm
+        run: npm -v
+
+      - name: Echo de prueba
+        run: echo "✅ GitHub Actions está funcionando correctamente"
