@@ -1,4 +1,4 @@
-name: Lint Check (Sin JFrog, sin lockfile)
+name: Lint Check (Debug)
 
 on:
   pull_request:
@@ -18,13 +18,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Remove lockfile
-        working-directory: ./pablo-sand-box
-        run: rm -f package-lock.json
-
-      - name: Install dependencies
+      - name: Instalar dependencias
         working-directory: ./pablo-sand-box
         run: npm install
+
+      - name: Mostrar archivos en el proyecto
+        working-directory: ./pablo-sand-box
+        run: |
+          echo "Archivos en el proyecto:"
+          find . -type f
 
       - name: Verificar ESLint instalado
         working-directory: ./pablo-sand-box
@@ -35,4 +37,3 @@ jobs:
         run: |
           echo "Linting files..."
           npx eslint . --ext .ts,.html --max-warnings=0 --debug || echo "ESLint falló pero mostramos el error"
-
