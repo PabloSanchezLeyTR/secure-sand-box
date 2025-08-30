@@ -14,4 +14,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Echo test
-        run: echo "✅ GitHub Actions está funcionando correctamentes"
+        run: echo "✅ GitHub Actions está funcionando correctamente"
+
+      - name: Usar token de GitHub
+        run: echo "Token disponible"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
