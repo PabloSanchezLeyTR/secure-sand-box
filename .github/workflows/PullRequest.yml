@@ -1,3 +1,4 @@
+# .github/workflows/lint.yml
 name: Lint Check
 
 on:
@@ -18,15 +19,14 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configure JFrog (si aplica)
+      - name: Configure JFrog registry
         if: secrets.JFROG_AUTH_TOKEN != ''
         run: |
-          echo "//your.jfrog.repo/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: |
-          npm install
+        run: npm install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.JFROG_AUTH_TOKEN }}
 
