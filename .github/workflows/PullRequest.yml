@@ -19,10 +19,9 @@ jobs:
 
       - name: Authenticate with JFrog
         run: |
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
+          echo "@tr:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> ~/.npmrc
+
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
