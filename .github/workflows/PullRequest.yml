@@ -1,9 +1,13 @@
-name: Pull Request Validation EsLint
+name: Pull Request Validation
 
 on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   lint:
@@ -11,25 +15,23 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Authenticate with JFrog
+      - name: Verificar versión de Node
+        run: node -v
+
+      - name: Verificar contenido de package.json
+        working-directory: ./pablo-sand-box
+        run: cat package.json || echo "❌ package.json no encontrado"
+
+      - name: Instalar ESLint desde registro público con debug
+        working-directory: ./pablo-sand-box
         run: |
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
+          npm install --save-dev eslint --registry=https://registry.npmjs.org/ || (
+            echo "❌ Falló la instalación de ESLint"
+            exit 1
+          )
 
-      - name: Install dependencies
-        working-directory: ./pablo-sand-box
-        run: npm install
-
-        
-      - name: Ensure ESLint is installed
-        working-directory: ./pablo-sand-box
-        run: npm install --save-dev eslint --registry=https://registry.npmjs.org/
-        
-
-      - name: Run lint
+      - name: Ejecutar lint
         working-directory: ./pablo-sand-box
         run: npm run lint
