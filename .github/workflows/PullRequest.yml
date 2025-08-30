@@ -1,5 +1,3 @@
-
-# .github/workflows/lint.yml
 name: Lint Check
 
 on:
@@ -22,9 +20,7 @@ jobs:
 
       - name: Configure JFrog registry
         run: |
-          if [ -n "${{ secrets.JFROG_AUTH_TOKEN }}" ]; then
-            echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
-          fi
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
@@ -34,4 +30,6 @@ jobs:
 
       - name: Run ESLint
         working-directory: ./pablo-sand-box
-        run: npm run lint
+        run: |
+          echo "Linting files..."
+          npx eslint . --ext .ts,.html --max-warnings=0
