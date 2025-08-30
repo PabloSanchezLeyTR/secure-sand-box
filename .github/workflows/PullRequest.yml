@@ -1,13 +1,9 @@
-name: Pull Request Validation
+name: Pull Request Validation EsLint
 
 on:
   pull_request:
     branches:
       - main
-
-permissions:
-  contents: read
-  pull-requests: read
 
 jobs:
   lint:
@@ -15,80 +11,26 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Debug de secretos (sin mostrar valores)
+      - name: Authenticate with JFrog
         run: |
-          echo "¿JFROG_AUTH_TOKEN está definido?: ${{ secrets.JFROG_AUTH_TOKEN != '' }}"
-          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
-          echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
+          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
+          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
 
-      - name: Generar archivo .npmrc dinámico
-        run: |
-          echo "@208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "@dcl:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "@dcl-ue:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "@tr:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "@tr-digital:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> ~/.npmrc
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
-
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_API_KEY }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
-
-      - name: Verificar contenido de package.json
+      - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: |
-          echo "Contenido de package.json:"
-          cat package.json || echo "Archivo no encontrado"
+        run: npm install
 
-      - name: Instalar dependencias (con debug)
-        working-directory: ./pablo-sand-box
-        run: |
-          npm install || (echo "❌ npm install falló" && exit 1)
-
-      - name: Asegurar ESLint instalado
+        
+      - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
         run: npm install --save-dev eslint
 
-      - name: Ejecutar lint
+      - name: Run lint
         working-directory: ./pablo-sand-box
         run: npm run lint
-  axe-lint:
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Debug de secretos (sin mostrar valores)
-        run: |
-          echo "¿AXE_LINTER_AUTH está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
-          echo "¿NPM_EMAIL está definido?: ${{ secrets.NPM_EMAIL != '' }}"
-          echo "¿AXE_LINTER_API_KEY está definido?: ${{ secrets.AXE_LINTER_API_KEY != '' }}"
-
-      - name: Generar archivo .npmrc dinámico
-        run: |
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AXE_LINTER_API_KEY }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
-
-      - name: Verificar archivos y configuración
-        run: |
-          echo "Contenido del directorio actual:"
-          ls -la
-          echo "Contenido del archivo .axe-linter.yml:"
-          cat .axe-linter.yml || echo "Archivo no encontrado"
-          echo "Archivos HTML detectados:"
-          find . -name "*.html"
-
-      - name: Ejecutar axe-linter
-        uses: dequelabs/axe-linter-action@v1
-        with:
-          api_key: ${{ secrets.AXE_LINTER_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
