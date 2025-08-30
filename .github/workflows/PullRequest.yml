@@ -1,4 +1,4 @@
-name: Lint Check
+name: Lint Check (Sin JFrog)
 
 on:
   pull_request:
@@ -18,24 +18,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configure JFrog registry
-        working-directory: ./pablo-sand-box
-        run: |
-          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" > .npmrc
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.JFROG_AUTH_TOKEN }}
 
-      - name: Check ESLint installation
+      - name: Verificar ESLint instalado
         working-directory: ./pablo-sand-box
         run: npx eslint -v
 
-      - name: Run ESLint
+      - name: Ejecutar ESLint
         working-directory: ./pablo-sand-box
         run: |
           echo "Linting files..."
