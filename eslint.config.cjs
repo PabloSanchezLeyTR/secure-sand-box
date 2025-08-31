@@ -1,15 +1,17 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const { FlatCompat } = require('@eslint/eslintrc');
+const path = require('path');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: {
+    eslint: require('eslint/conf/eslint-recommended'),
+    typescript: require('@typescript-eslint/eslint-plugin/dist/configs/recommended'),
+    angular: require('@angular-eslint/eslint-plugin/dist/configs/recommended'),
+    angularTemplate: require('@angular-eslint/template-parser/dist/configs/recommended'),
+  },
 });
 
-export default [
+module.exports = [
   ...compat.config({
     root: true,
     ignorePatterns: ['**/*.js'],
