@@ -50,8 +50,10 @@ jobs:
 
           EXISTING_FILES=()
           for file in $CHANGED_FILES; do
-            if [ -f "$file" ]; then
-              EXISTING_FILES+=("$file")
+            # Remover el prefijo 'pablo-sand-box/' si existe
+            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+            if [ -f "$RELATIVE_FILE" ]; then
+              EXISTING_FILES+=("$RELATIVE_FILE")
             fi
           done
 
@@ -62,4 +64,5 @@ jobs:
           else
             echo "No valid TypeScript or HTML files to lint."
           fi
+
 
