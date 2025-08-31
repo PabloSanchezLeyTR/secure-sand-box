@@ -38,7 +38,7 @@ jobs:
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
         run: |
-          BASE_REF=$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
           git fetch origin $BASE_REF
           CHANGED_FILES=$(git diff --name-only origin/$BASE_REF...HEAD -- '*.ts' '*.html')
           if [ -n "$CHANGED_FILES" ]; then
@@ -47,5 +47,6 @@ jobs:
             npx eslint $CHANGED_FILES --max-warnings=0
           else
             echo "No TypeScript or HTML files changed."
+
 
 
