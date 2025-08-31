@@ -35,18 +35,26 @@ jobs:
           npm config set registry https://registry.npmjs.org/
           npm install --save-dev eslint
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # importante para que git diff funcione bien
+
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
         run: |
           BASE_REF="${{ github.event.pull_request.base.ref }}"
           git fetch origin $BASE_REF
-          CHANGED_FILES=$(git diff --name-only origin/$BASE_REF...HEAD -- '*.ts' '*.html')
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.ts' '*.html')
           if [ -n "$CHANGED_FILES" ]; then
             echo "Linting changed files:"
             echo "$CHANGED_FILES"
             npx eslint $CHANGED_FILES --max-warnings=0
           else
             echo "No TypeScript or HTML files changed."
+
+
 
 
 
