@@ -43,6 +43,7 @@ jobs:
           if [ -n "$CHANGED_FILES" ]; then
             echo "Linting changed files:"
             echo "$CHANGED_FILES"
-            npx eslint $CHANGED_FILES
+            npx eslint $CHANGED_FILES --max-warnings=0
           else
             echo "No TypeScript or HTML files changed."
+
