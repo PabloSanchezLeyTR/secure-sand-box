@@ -47,13 +47,22 @@ jobs:
           git fetch origin $BASE_REF
           MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
           CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.ts' '*.html')
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Linting changed files:"
-            echo "$CHANGED_FILES"
-            npx eslint $CHANGED_FILES --max-warnings=0
+
+          EXISTING_FILES=""
+          for file in $CHANGED_FILES; do
+            if [ -f "$file" ]; then
+              EXISTING_FILES="$EXISTING_FILES $file"
+            fi
+          done
+
+          if [ -n "$EXISTING_FILES" ]; then
+            echo "Linting existing changed files:"
+            echo "$EXISTING_FILES"
+            npx eslint $EXISTING_FILES --max-warnings=0
           else
-            echo "No TypeScript or HTML files changed."
+            echo "No valid TypeScript or HTML files to lint."
           fi
+
 
 
 
