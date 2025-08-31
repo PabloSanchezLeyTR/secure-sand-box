@@ -53,6 +53,7 @@ jobs:
             npx eslint $CHANGED_FILES --max-warnings=0
           else
             echo "No TypeScript or HTML files changed."
+          fi
 
 
 
