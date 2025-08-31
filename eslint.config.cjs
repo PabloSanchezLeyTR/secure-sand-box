@@ -3,12 +3,6 @@ const path = require('path');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
-  recommendedConfig: {
-    eslint: require('eslint/conf/eslint-recommended'),
-    typescript: require('@typescript-eslint/eslint-plugin/dist/configs/recommended'),
-    angular: require('@angular-eslint/eslint-plugin/dist/configs/recommended'),
-    angularTemplate: require('@angular-eslint/template-parser/dist/configs/recommended'),
-  },
 });
 
 module.exports = [
