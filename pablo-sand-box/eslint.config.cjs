@@ -31,15 +31,15 @@ module.exports = [
           'no-console': 'warn',
         },
       },
-      {
-        files: ['*.html'],
-        extends: ['plugin:@angular-eslint/template/recommended'],
-        plugins: ['@angular-eslint/template'],
-        rules: {
-          '@angular-eslint/template/no-negated-async': 'error',
-          '@angular-eslint/template/accessible-name': 'warn',
-        },
-      },
+     {
+  files: ['*.html'],
+  extends: ['plugin:@angular-eslint/template/recommended'],
+  plugins: ['@angular-eslint/template'],
+  rules: {
+    '@angular-eslint/template/no-negated-async': 'error'
+    // Elimina 'accessible-name' porque no existe
+  },
+},
     ],
   }),
 ];
