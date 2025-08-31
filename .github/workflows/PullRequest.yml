@@ -1,4 +1,4 @@
-name: Pull Request Validation EsLint
+name: Pull Request Validation ESLint
 
 on:
   pull_request:
@@ -7,11 +7,13 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full history to enable proper diffing
 
       - name: Authenticate with JFrog
         run: |
@@ -20,15 +22,47 @@ jobs:
           echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
           echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install
 
-        
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
-        run: npm install --save-dev eslint
+        run: |
+          npm config set registry https://registry.npmjs.org/
+          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
 
-      - name: Run lint
+      - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
-        run: npm run lint
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+
+          echo "Archivos modificados detectados:"
+          echo "$CHANGED_FILES"
+
+          EXISTING_FILES=()
+          for file in $CHANGED_FILES; do
+            # Remover el prefijo 'pablo-sand-box/' si existe
+            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+            if [ -f "$RELATIVE_FILE" ]; then
+              EXISTING_FILES+=("$RELATIVE_FILE")
+            fi
+          done
+
+          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+            echo "Linting existing changed files:"
+            printf '%s\n' "${EXISTING_FILES[@]}"
+            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
+          else
+            echo "No valid TypeScript or HTML files to lint."
+          fi
+
+
