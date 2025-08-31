@@ -48,17 +48,18 @@ jobs:
           echo "Archivos modificados detectados:"
           echo "$CHANGED_FILES"
 
-          EXISTING_FILES=""
+          EXISTING_FILES=()
           for file in $CHANGED_FILES; do
             if [ -f "$file" ]; then
-              EXISTING_FILES="$EXISTING_FILES $file"
+              EXISTING_FILES+=("$file")
             fi
           done
 
-          if [ -n "$EXISTING_FILES" ]; then
+          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
             echo "Linting existing changed files:"
-            echo "$EXISTING_FILES"
-            npx eslint $EXISTING_FILES --ext .ts,.html --max-warnings=0
+            printf '%s\n' "${EXISTING_FILES[@]}"
+            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
           else
             echo "No valid TypeScript or HTML files to lint."
           fi
+
