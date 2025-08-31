@@ -3,6 +3,9 @@ const path = require('path');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: {
+    eslint: { plugins: {}, rules: {} }, // vacío para evitar el error
+  },
 });
 
 module.exports = [
@@ -17,7 +20,6 @@ module.exports = [
           createDefaultProgram: true,
         },
         extends: [
-          'eslint:recommended',
           'plugin:@typescript-eslint/recommended',
           'plugin:@angular-eslint/recommended',
         ],
