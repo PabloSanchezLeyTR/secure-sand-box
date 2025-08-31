@@ -40,4 +40,4 @@ jobs:
 
       - name: Run lint
         working-directory: ./pablo-sand-box
-        run: npm run lint
+        run: npx eslint ./src --ext .ts,.html
