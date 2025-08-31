@@ -28,11 +28,11 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        working-directory: ./pablo-sand-box/src
+        working-directory: ./pablo-sand-box
         run: npm install
 
       - name: Ensure ESLint is installed
-        working-directory: ./pablo-sand-box/src
+        working-directory: ./pablo-sand-box
         run: |
           npm config set registry https://registry.npmjs.org/
           npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
@@ -43,7 +43,10 @@ jobs:
           BASE_REF="${{ github.event.pull_request.base.ref }}"
           git fetch origin $BASE_REF
           MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.ts' '*.html')
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+
+          echo "Archivos modificados detectados:"
+          echo "$CHANGED_FILES"
 
           EXISTING_FILES=""
           for file in $CHANGED_FILES; do
