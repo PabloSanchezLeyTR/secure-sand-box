@@ -1,4 +1,4 @@
-name: Pull Request Validation EsLint
+name: Pull Request Validation ESLint
 
 on:
   pull_request:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full history to enable proper diffing
 
       - name: Authenticate with JFrog
         run: |
@@ -33,12 +35,7 @@ jobs:
         working-directory: ./pablo-sand-box
         run: |
           npm config set registry https://registry.npmjs.org/
-          npm install --save-dev eslint
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # importante para que git diff funcione bien
+          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
 
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
@@ -58,13 +55,7 @@ jobs:
           if [ -n "$EXISTING_FILES" ]; then
             echo "Linting existing changed files:"
             echo "$EXISTING_FILES"
-            npx eslint $EXISTING_FILES --max-warnings=0
+            npx eslint $EXISTING_FILES --ext .ts,.html --max-warnings=0
           else
             echo "No valid TypeScript or HTML files to lint."
           fi
-
-
-
-
-
-
