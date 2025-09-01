@@ -66,3 +66,21 @@ jobs:
           fi
 
 
+  axe-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out latest files
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          lfs: 'true'
+
+      - name: Run Axe Linter
+        uses: tr/cicd_gh-actions-axe/linter@v2.0
+        with:
+          artifactory_user: ${{ secrets.NPM_EMAIL }}
+          artifactory_token: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+          axe_linter_license_key: ${{ secrets.AXE_LINTER_API_KEY }}
+          application_name: "Cobalt Static Content"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
