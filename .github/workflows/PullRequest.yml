@@ -96,7 +96,7 @@ jobs:
             --output=axe-report.html
 
       - name: Upload axe report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: axe-accessibility-report
           path: axe-report.html
