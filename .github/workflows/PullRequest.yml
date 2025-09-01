@@ -75,7 +75,7 @@ jobs:
         - name: Configure Agora Artifactory for axe-linter
           run: |
             echo "//${{ secrets.AGORA_ARTIFACTORY_URL }}/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > .npmrc
-            npm config set registry https://${{ secrets.AGORA_ARTIFACTORY_URL }}/npm/
+            npm config set registry ${{ secrets.AGORA_ARTIFACTORY_URL }}/npm/
 
         - name: Install axe-linter CLI
           run: npm install -g @axe-core/cli
