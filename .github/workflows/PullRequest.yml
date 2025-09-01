@@ -65,10 +65,15 @@ jobs:
             echo "No valid TypeScript or HTML files to lint."
           fi
 
-
   axe-lint:
     runs-on: self-hosted
     steps:
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
       - name: Check out latest files
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
