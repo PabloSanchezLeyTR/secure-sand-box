@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Copy .npmrc to working directory
+        run: cp ~/.npmrc ./pablo-sand-box/
+
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install
