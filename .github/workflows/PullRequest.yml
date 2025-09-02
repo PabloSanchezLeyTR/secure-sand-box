@@ -99,6 +99,9 @@ jobs:
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
 
+      - name: Verificar contenido del paquete
+        run: ls -R ./node_modules/@axe-devtools/axe-linter-connector
+
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
