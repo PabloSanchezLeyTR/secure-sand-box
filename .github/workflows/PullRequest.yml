@@ -67,9 +67,8 @@ jobs:
 
   axe-lint:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout código
+      - name: Check out latest files
         uses: actions/checkout@v5
 
       - name: Configurar acceso a Artifactory de Agora
@@ -80,12 +79,9 @@ jobs:
       - name: Instalar axe-linter desde Agora
         run: npm install @axe-devtools/axe-linter-connector -D
 
-      - name: Instalar dependencias del proyecto
-        run: npm install
-      - name: Iniciar servidor local
-        run: |
-          npm run start &  # Asegúrate de que este comando levante tu app en localhost:3000
-          sleep 10         # Ajusta el tiempo si tu app tarda más en iniciar
+
+      - name: Instalar axe-linter desde Agora
+        run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
       - name: Ejecutar axe-linter
         env:
@@ -100,8 +96,11 @@ jobs:
             --api-key=$DEQUE_API_KEY \
             --output=axe-report.json
 
-      - name: Subir reporte de accesibilidad
+
+
+
+      - name: Upload axe report
         uses: actions/upload-artifact@v4
         with:
           name: axe-accessibility-report
-          path: axe-report.json
+          path: axe-report.html
