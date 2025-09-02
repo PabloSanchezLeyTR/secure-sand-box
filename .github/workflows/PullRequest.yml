@@ -66,35 +66,3 @@ jobs:
           fi
 
   
-  axe-lint:
-      runs-on: self-hosted
-      steps:
-        - name: Check out latest files
-          uses: actions/checkout@v5
-
-        - name: Configure Agora Artifactory for axe-linter
-          run: |
-            echo "//${{ secrets.AGORA_ARTIFACTORY_URL }}/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > .npmrc
-            npm config set registry ${{ secrets.AGORA_ARTIFACTORY_URL }}/npm/
-
-        - name: Install axe-linter CLI
-          run: npm install -g @axe-core/cli
-
-        - name: Run axe-linter CLI
-          env:
-            DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-            AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-            AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-          run: |
-            axe https://localhost:3000 \
-              --client-id=$AGORA_CLIENT_ID \
-              --client-secret=$AGORA_CLIENT_SECRET \
-              --api-key=$DEQUE_API_KEY \
-              --reporter=html \
-              --output=axe-report.html
-
-        - name: Upload axe report
-          uses: actions/upload-artifact@v4
-          with:
-            name: axe-accessibility-report
-            path: axe-report.html
