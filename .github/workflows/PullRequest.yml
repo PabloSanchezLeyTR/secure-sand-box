@@ -94,10 +94,11 @@ jobs:
           NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
           ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" > .npmrc
-          npm install @axe-devtools/axe-linter \
-            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
-            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
+          npm config set @axe-devtools:registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken $ARTIFACTORY_TOKEN_AXELINTER
+          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email $NPM_EMAIL
+          npm install @axe-devtools/axe-linter
+
 
       - name: Ejecutar axe-linter
         run: |
