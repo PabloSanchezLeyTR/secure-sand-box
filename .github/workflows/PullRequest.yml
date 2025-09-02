@@ -77,6 +77,11 @@ jobs:
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
           npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
+
+      - name: Limpiar instalación previa
+        run: rm -rf node_modules package-lock.json && npm cache clean --force
+
+
       - name: Instalar axe-linter desde Agora
         run: npm install @axe-devtools/axe-linter-connector -D
 
