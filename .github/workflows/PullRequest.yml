@@ -101,21 +101,19 @@ jobs:
 
       
       - name: Ejecutar axe-linter
-        env:
-          DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-          AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-          AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
           mkdir -p ./dist/reports
-          npx axe-linter-connector \
+          npx axe-linter \
             --url=https://localhost:3000 \
             --reporter=sonarqube \
             --destination=./dist/reports \
             --filename=axe-report.json \
-            --client-id=$AGORA_CLIENT_ID \
-            --client-secret=$AGORA_CLIENT_SECRET \
-            --api-key=$DEQUE_API_KEY \
-            --local=false
+            --client-id=${{ secrets.CLIENT_ID }} \
+            --client-secret=${{ secrets.CLIENT_SECRET }} \
+            --api-key=${{ secrets.API_KEY }} \
+            --local=false \
+            --source=./src
+
 
 
       - name: Upload axe report
