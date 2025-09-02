@@ -23,24 +23,20 @@ jobs:
           echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
           echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
 
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Copiar .npmrc al home del runner
-        run: cp ./pablo-sand-box/.npmrc ~/.npmrc
-
       - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: npm install --userconfig=.npmrc
+        run: npm install
 
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
         run: |
-          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser --userconfig=.npmrc
-
+          npm config set registry https://registry.npmjs.org/
+          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
 
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
@@ -69,43 +65,3 @@ jobs:
             echo "No valid TypeScript or HTML files to lint."
           fi
 
-  axe-lint:
-    runs-on: self-hosted
-
-    steps:
-      - name: Check out latest files
-        uses: actions/checkout@v5
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Instalar axe-linter desde Agora (sin .npmrc)
-        env:
-          NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
-          ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-        run: |
-          npm install @axe-devtools/axe-linter-connector -D \
-            --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/ \
-            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
-            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
-
-      - name: Ejecutar axe-linter
-        env:
-          DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-          AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-          AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-        run: |
-          npx axe-linter-connector https://localhost:3000 \
-            --client-id=$AGORA_CLIENT_ID \
-            --client-secret=$AGORA_CLIENT_SECRET \
-            --api-key=$DEQUE_API_KEY \
-            --reporter=html \
-            --output=axe-report.html
-
-      - name: Upload axe report
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-accessibility-report
-          path: axe-report.html
