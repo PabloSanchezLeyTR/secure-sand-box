@@ -94,16 +94,15 @@ jobs:
           NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
           ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          npm config set @axe-devtools:registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
-          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken $ARTIFACTORY_TOKEN_AXELINTER
-          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email $NPM_EMAIL
-          npm install @axe-devtools/axe-linter
-
+          npm install @axe-devtools/axe-linter-connector -D \
+            --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/ \
+            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
+            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
 
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
-          npx axe-linter \
+          ./node_modules/@axe-devtools/axe-linter-connector/pkgs/@axe-devtools/axe-linter-connector-macos \
             --url=https://localhost:3000 \
             --reporter=sonarqube \
             --destination=./dist/reports \
@@ -119,4 +118,5 @@ jobs:
         with:
           name: axe-accessibility-report
           path: ./dist/reports/axe-report.json
+
 
