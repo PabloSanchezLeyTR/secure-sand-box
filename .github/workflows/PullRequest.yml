@@ -89,17 +89,16 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Instalar axe-linter desde Agora (sin .npmrc)
+      - name: Instalar axe-linter desde Agora
         env:
           NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
           ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          npm install @axe-devtools/axe-linter-connector -D \
-            --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/ \
+          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" > .npmrc
+          npm install @axe-devtools/axe-linter \
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
 
-      
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
@@ -114,10 +113,9 @@ jobs:
             --local=false \
             --source=./src
 
-
-
       - name: Upload axe report
         uses: actions/upload-artifact@v4
         with:
           name: axe-accessibility-report
           path: ./dist/reports/axe-report.json
+
