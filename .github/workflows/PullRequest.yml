@@ -73,6 +73,9 @@ jobs:
       - name: Check out latest files
         uses: actions/checkout@v5
 
+      - name: Crear directorio temporal para axe-linter
+        run: mkdir -p .axe-temp
+
       - name: Configurar Artifactory de Agora
         working-directory: ./axe-temp
         run: |
