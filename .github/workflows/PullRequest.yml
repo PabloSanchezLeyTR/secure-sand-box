@@ -100,10 +100,12 @@ jobs:
         run: |
           npx axe-linter-connector \
             --source=https://localhost:3000 \
+            --destination=web \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY \
             --output=axe-report.json
+
 
       - name: Subir reporte de accesibilidad
         uses: actions/upload-artifact@v4
