@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Copiar .npmrc al home del runner
+        run: cp ./pablo-sand-box/.npmrc ~/.npmrc
+
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm install --userconfig=.npmrc
