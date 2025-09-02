@@ -85,7 +85,8 @@ jobs:
 
       - name: Instalar axe-linter desde Agora
         working-directory: ./axe-temp
-        run: npm install @axe-devtools/axe-linter-connector -D
+        run: npm install @axe-devtools/axe-linter-connector -D --userconfig=.npmrc
+
 
       - name: Ejecutar axe-linter
         env:
