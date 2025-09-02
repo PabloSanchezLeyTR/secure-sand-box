@@ -99,18 +99,21 @@ jobs:
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
             --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
 
+      
       - name: Ejecutar axe-linter
         env:
           DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
           AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
           AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          npx axe-linter-connector https://localhost:3000 \
+          npx axe-linter-connector \
+            --source=https://localhost:3000 \
+            --destination=axe-report.html \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY \
-            --reporter=html \
-            --output=axe-report.html
+            --reporter=html
+
 
       - name: Upload axe report
         uses: actions/upload-artifact@v4
