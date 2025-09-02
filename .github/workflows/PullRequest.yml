@@ -107,13 +107,14 @@ jobs:
           AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
           npx axe-linter-connector \
-            --source=https://localhost:3000 \
-            --destination=axe-report.json \
+            --url=https://localhost:3000 \
             --reporter=sonarqube \
             --filename=axe-report.json \
+            --destination=axe-report.json \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY
+
 
 
 
@@ -121,4 +122,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: axe-accessibility-report
-          path: axe-report.html
+          path: axe-report.json
