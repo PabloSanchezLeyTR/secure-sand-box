@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: npm install
+        run: npm install --userconfig=.npmrc
 
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
