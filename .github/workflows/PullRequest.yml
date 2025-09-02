@@ -67,37 +67,41 @@ jobs:
             echo "No valid TypeScript or HTML files to lint."
           fi
 
-  # axe-lint:
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Check out latest files
-  #       uses: actions/checkout@v5
+  axe-lint:
+    runs-on: self-hosted
+    steps:
+      - name: Check out latest files
+        uses: actions/checkout@v5
 
-  #     - name: Configurar Artifactory de Agora
-  #       run: |
-  #         echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > .npmrc
-  #         npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+      - name: Configurar Artifactory de Agora
+        working-directory: ./axe-temp
+        run: |
+          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" > .npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" >> .npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> .npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> .npmrc
 
-  #     - name: Instalar axe-linter desde Agora
-  #       run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
-  #     - name: Ejecutar axe-linter
-  #       env:
-  #         DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-  #         AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-  #         AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-  #       run: |
-  #         npx axe-linter-connector https://localhost:3000 \
-  #           --client-id=$AGORA_CLIENT_ID \
-  #           --client-secret=$AGORA_CLIENT_SECRET \
-  #           --api-key=$DEQUE_API_KEY \
-  #           --reporter=html \
-  #           --output=axe-report.html
+      - name: Instalar axe-linter desde Agora
+        run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
-  #     - name: Upload axe report
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: axe-accessibility-report
-  #         path: axe-report.html
+      - name: Ejecutar axe-linter
+        env:
+          DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
+          AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
+          AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+        run: |
+          npx axe-linter-connector https://localhost:3000 \
+            --client-id=$AGORA_CLIENT_ID \
+            --client-secret=$AGORA_CLIENT_SECRET \
+            --api-key=$DEQUE_API_KEY \
+            --reporter=html \
+            --output=axe-report.html
+
+      - name: Upload axe report
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-accessibility-report
+          path: axe-report.html
 
 
