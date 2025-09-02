@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch full history to enable proper diffing
 
       - name: Authenticate with JFrog
         run: |
@@ -41,15 +41,16 @@ jobs:
         working-directory: ./pablo-sand-box
         run: |
           BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin "$BASE_REF"
-          MERGE_BASE=$(git merge-base origin/"$BASE_REF" HEAD)
-          CHANGED_FILES=$(git diff --name-only "$MERGE_BASE"..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
 
           echo "Archivos modificados detectados:"
           echo "$CHANGED_FILES"
 
           EXISTING_FILES=()
           for file in $CHANGED_FILES; do
+            # Remover el prefijo 'pablo-sand-box/' si existe
             RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
             if [ -f "$RELATIVE_FILE" ]; then
               EXISTING_FILES+=("$RELATIVE_FILE")
@@ -65,50 +66,50 @@ jobs:
           fi
 
   axe-lint:
-    runs-on: self-hosted
+      runs-on: self-hosted
 
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v5
+      steps:
+        - name: Checkout código
+          uses: actions/checkout@v5
 
-      - name: Configurar acceso a Artifactory de Agora
-        run: |
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
-          npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+        - name: Configurar acceso a Artifactory de Agora
+          run: |
+            echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
+            npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
-      - name: Limpiar instalación previa
-        run: rm -rf node_modules package-lock.json && npm cache clean --force
+        - name: Limpiar instalación previa
+          run: rm -rf node_modules package-lock.json && npm cache clean --force
 
-      - name: Instalar axe-linter desde Agora
-        run: npm install @axe-devtools/axe-linter-connector -D
+        - name: Instalar axe-linter desde Agora
+          run: npm install @axe-devtools/axe-linter-connector -D
 
-      - name: Instalar dependencias del proyecto
-        run: npm install
+        - name: Instalar dependencias del proyecto
+          run: npm install
 
-      - name: Iniciar servidor local
-        run: |
-          npm run start &
-          sleep 10
+        - name: Iniciar servidor local
+          run: |
+            npm run start &
+            sleep 10
 
-      - name: Verificar que localhost:3000 responde
-        run: curl -k --fail https://localhost:3000 || echo "Servidor no responde"
+        - name: Verificar que localhost:3000 responde
+          run: curl -k --fail https://localhost:3000 || echo "Servidor no responde"
 
-      - name: Ejecutar axe-linter
-        env:
-          DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-          AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-          AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-        run: |
-          npx axe-linter-connector \
-            --source=https://localhost:3000 \
-            --destination=web \
-            --client-id=$AGORA_CLIENT_ID \
-            --client-secret=$AGORA_CLIENT_SECRET \
-            --api-key=$DEQUE_API_KEY \
-            --output=axe-report.json
+        - name: Ejecutar axe-linter
+          env:
+            DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
+            AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
+            AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+          run: |
+            npx axe-linter-connector \
+              --source=https://localhost:3000 \
+              --destination=web \
+              --client-id=$AGORA_CLIENT_ID \
+              --client-secret=$AGORA_CLIENT_SECRET \
+              --api-key=$DEQUE_API_KEY \
+              --output=axe-report.json
 
-      - name: Subir reporte de accesibilidad
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-accessibility-report
-          path: axe-report.json
+        - name: Subir reporte de accesibilidad
+          uses: actions/upload-artifact@v4
+          with:
+            name: axe-accessibility-report
+            path: axe-report.json
