@@ -15,6 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
+
       - name: Autenticación con JFrog (crear .npmrc dinámico)
         working-directory: ./pablo-sand-box
         run: |
@@ -22,9 +23,12 @@ jobs:
           echo "@typescript-eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
           echo "@eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
           echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
           echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> .npmrc
           echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
+
+      - name: Copiar .npmrc al home del runner
+        run: cp ./pablo-sand-box/.npmrc ~/.npmrc
 
       - name: Limpiar lockfile y node_modules
         working-directory: ./pablo-sand-box
@@ -39,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: npm install --userconfig=.npmrc
+        run: npm install
 
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
