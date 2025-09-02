@@ -71,14 +71,10 @@ jobs:
       - name: Check out latest files
         uses: actions/checkout@v5
 
-      - name: Configurar acceso a Artifactory de Agora
+      - name: Configurar Artifactory de Agora
         run: |
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > .npmrc
           npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
-
-      - name: Instalar axe-linter desde Agora
-        run: npm install @axe-devtools/axe-linter-connector -D
-
 
       - name: Instalar axe-linter desde Agora
         run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
