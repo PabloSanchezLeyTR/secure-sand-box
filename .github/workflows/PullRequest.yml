@@ -15,20 +15,23 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history to enable proper diffing
 
-      - name: Authenticate with JFrog
-        run: |
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
+      # - name: Authenticate with JFrog
+      #   run: |
+      #     echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > ~/.npmrc
+      #     echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> ~/.npmrc
+      #     echo "email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
+      #     echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> ~/.npmrc
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Copy .npmrc to working directory
-        run: cp ~/.npmrc ./pablo-sand-box/
+
+      - name: Set registry to public npm
+        working-directory: ./pablo-sand-box
+        run: npm config set registry https://registry.npmjs.or
+
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
