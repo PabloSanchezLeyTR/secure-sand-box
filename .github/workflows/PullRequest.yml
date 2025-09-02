@@ -36,8 +36,8 @@ jobs:
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
         run: |
-          npm config set registry https://registry.npmjs.org/
-          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
+          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser --userconfig=.npmrc
+
 
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
