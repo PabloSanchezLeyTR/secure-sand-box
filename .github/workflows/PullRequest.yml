@@ -106,22 +106,18 @@ jobs:
           AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
           AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
+          mkdir -p ./dist/reports
           npx axe-linter-connector \
             --source=https://localhost:3000 \
-            --url=https://localhost:3000 \
             --reporter=sonarqube \
+            --destination=./dist/reports \
             --filename=axe-report.json \
-            --destination=axe-report.json \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY
-
-
-
-
 
       - name: Upload axe report
         uses: actions/upload-artifact@v4
         with:
           name: axe-accessibility-report
-          path: axe-report.json
+          path: ./dist/reports/axe-report.json
