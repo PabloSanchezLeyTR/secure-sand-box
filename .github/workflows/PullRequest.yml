@@ -72,25 +72,20 @@ jobs:
       - name: Check out latest files
         uses: actions/checkout@v5
 
-      - name: Crear directorio temporal para axe-linter
-        run: mkdir -p axe-temp
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Configurar Artifactory de Agora
-        working-directory: ./axe-temp
+      - name: Configurar Agora como registry
         run: |
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" > .npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" >> .npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> .npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> .npmrc
-
-
-      - name: Copiar .npmrc de Agora al root
-        run: cp ./axe-temp/.npmrc .npmrc
+          npm config set @axe-devtools:registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}
+          npm config set //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true
 
       - name: Instalar axe-linter desde Agora
-        working-directory: ./axe-temp
-        run: npm install @axe-devtools/axe-linter-connector -D --userconfig=.npmrc
-
+        run: npm install @axe-devtools/axe-linter-connector -D
 
       - name: Ejecutar axe-linter
         env:
