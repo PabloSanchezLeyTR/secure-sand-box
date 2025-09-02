@@ -94,9 +94,10 @@ jobs:
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY \
             --source=https://localhost:3000 \
-            --destination=axe-report.html \
-            --reporter=html \
-            --output=axe-report.html
+            --destination=axe-report.json \
+            --reporter=json \
+            --output=axe-report.json
+
 
 
       - name: Upload axe report
