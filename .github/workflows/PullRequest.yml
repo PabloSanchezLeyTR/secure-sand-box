@@ -1,4 +1,4 @@
-name: Pull Request Validation ESLint
+name: Code Quality Checks
 
 on:
   pull_request:
@@ -22,7 +22,6 @@ jobs:
           echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> .npmrc
           echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
           echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
-
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -52,7 +51,6 @@ jobs:
 
           EXISTING_FILES=()
           for file in $CHANGED_FILES; do
-            # Remover el prefijo 'pablo-sand-box/' si existe
             RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
             if [ -f "$RELATIVE_FILE" ]; then
               EXISTING_FILES+=("$RELATIVE_FILE")
@@ -69,12 +67,13 @@ jobs:
 
   axe-lint:
     runs-on: self-hosted
+
     steps:
       - name: Check out latest files
         uses: actions/checkout@v5
 
       - name: Crear directorio temporal para axe-linter
-        run: mkdir -p .axe-temp
+        run: mkdir -p axe-temp
 
       - name: Configurar Artifactory de Agora
         working-directory: ./axe-temp
@@ -84,9 +83,9 @@ jobs:
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> .npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> .npmrc
 
-
       - name: Instalar axe-linter desde Agora
-        run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+        working-directory: ./axe-temp
+        run: npm install @axe-devtools/axe-linter-connector -D
 
       - name: Ejecutar axe-linter
         env:
@@ -106,5 +105,3 @@ jobs:
         with:
           name: axe-accessibility-report
           path: axe-report.html
-
-
