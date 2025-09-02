@@ -108,11 +108,13 @@ jobs:
         run: |
           npx axe-linter-connector \
             --source=https://localhost:3000 \
-            --destination=axe-report.html \
+            --destination=axe-report.json \
+            --reporter=sonarqube \
+            --filename=axe-report.json \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
-            --api-key=$DEQUE_API_KEY \
-            --reporter=html
+            --api-key=$DEQUE_API_KEY
+
 
 
       - name: Upload axe report
