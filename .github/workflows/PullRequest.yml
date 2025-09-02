@@ -67,48 +67,46 @@ jobs:
 
   axe-lint:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v5
+    - name: Check out latest files
+      uses: actions/checkout@v5
 
-      - name: Configurar acceso a Artifactory de Agora
-        run: |
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
-          npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+    - name: Configurar acceso a Artifactory de Agora
+      run: |
+        echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" > ~/.npmrc
+        npm config set registry https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
+    - name: Instalar dependencias del proyecto
+      run: npm install
 
-      - name: Limpiar instalación previa
-        run: rm -rf node_modules package-lock.json && npm cache clean --force
+    - name: Instalar axe-linter desde Agora
+      run: npm install @axe-devtools/axe-linter-connector -D --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
+    - name: Iniciar servidor local
+      run: |
+        npm run start &
+        sleep 10  # Espera a que el servidor esté listo
 
-      - name: Instalar axe-linter desde Agora
-        run: npm install @axe-devtools/axe-linter-connector -D
+    - name: Verificar que localhost:3000 responde
+      run: curl --fail https://localhost:3000 || echo "Servidor no responde"
 
-      - name: Instalar dependencias del proyecto
-        run: npm install
-      - name: Iniciar servidor local
-        run: |
-          npm run start &  # Asegúrate de que este comando levante tu app en localhost:3000
-          sleep 10         # Ajusta el tiempo si tu app tarda más en iniciar
+    - name: Ejecutar axe-linter
+      env:
+        DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
+        AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
+        AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+      run: |
+        npx axe-linter-connector \
+          --source=https://localhost:3000 \
+          --destination=web \
+          --client-id=$AGORA_CLIENT_ID \
+          --client-secret=$AGORA_CLIENT_SECRET \
+          --api-key=$DEQUE_API_KEY \
+          --output=axe-report.json
 
-      - name: Ejecutar axe-linter
-        env:
-          DEQUE_API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
-          AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
-          AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-        run: |
-          npx axe-linter-connector \
-            --source=https://localhost:3000 \
-            --destination=web \
-            --client-id=$AGORA_CLIENT_ID \
-            --client-secret=$AGORA_CLIENT_SECRET \
-            --api-key=$DEQUE_API_KEY \
-            --output=axe-report.json
+    - name: Subir reporte de accesibilidad
+      uses: actions/upload-artifact@v4
+      with:
+        name: axe-accessibility-report
+        path: axe-report.json
 
-
-      - name: Subir reporte de accesibilidad
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-accessibility-report
-          path: axe-report.json
