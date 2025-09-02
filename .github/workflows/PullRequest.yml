@@ -77,15 +77,15 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configurar Agora como registry
+      - name: Instalar axe-linter desde Agora (sin .npmrc)
+        env:
+          NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
+          ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          echo "@axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/" > ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> ~/.npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> ~/.npmrc
-
-      - name: Instalar axe-linter desde Agora
-        run: npm install @axe-devtools/axe-linter-connector -D
+          npm install @axe-devtools/axe-linter-connector -D \
+            --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/ \
+            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=$ARTIFACTORY_TOKEN_AXELINTER \
+            --//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=$NPM_EMAIL
 
       - name: Ejecutar axe-linter
         env:
