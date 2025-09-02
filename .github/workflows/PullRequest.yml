@@ -19,10 +19,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Configurar registro público de NPM
+ 
+      - name: Limpiar configuración de NPM y usar registro público
         working-directory: ./pablo-sand-box
-        run: npm config set registry https://registry.npmjs.org/
+        run: |
+            rm -f ~/.npmrc
+            npm config set registry https://registry.npmjs.org/
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
