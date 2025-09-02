@@ -83,6 +83,10 @@ jobs:
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}" >> .npmrc
           echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true" >> .npmrc
 
+
+      - name: Copiar .npmrc de Agora al root
+        run: cp ./axe-temp/.npmrc .npmrc
+
       - name: Instalar axe-linter desde Agora
         working-directory: ./axe-temp
         run: npm install @axe-devtools/axe-linter-connector -D --userconfig=.npmrc
