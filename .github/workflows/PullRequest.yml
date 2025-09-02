@@ -13,15 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch full history to enable proper diffing
+          fetch-depth: 0
 
       - name: Autenticación con JFrog (crear .npmrc dinámico)
         working-directory: ./pablo-sand-box
         run: |
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
+          echo "@angular:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" > .npmrc
+          echo "@typescript-eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+          echo "@eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_auth=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
           echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> .npmrc
           echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+
+      - name: Limpiar lockfile y node_modules
+        working-directory: ./pablo-sand-box
+        run: |
+          rm -f package-lock.json
+          rm -rf node_modules
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -30,13 +39,12 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./pablo-sand-box
-        run: npm install
+        run: npm install --userconfig=.npmrc
 
       - name: Ensure ESLint is installed
         working-directory: ./pablo-sand-box
         run: |
-          npm config set registry https://registry.npmjs.org/
-          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser
+          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser --userconfig=.npmrc
 
       - name: Run lint only on changed files
         working-directory: ./pablo-sand-box
