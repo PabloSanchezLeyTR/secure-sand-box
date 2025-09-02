@@ -107,6 +107,7 @@ jobs:
           AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
           npx axe-linter-connector \
+            --source=https://localhost:3000 \
             --url=https://localhost:3000 \
             --reporter=sonarqube \
             --filename=axe-report.json \
@@ -114,6 +115,7 @@ jobs:
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY
+
 
 
 
