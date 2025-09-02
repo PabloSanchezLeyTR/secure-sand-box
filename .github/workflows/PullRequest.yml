@@ -89,14 +89,13 @@ jobs:
           AGORA_CLIENT_ID: ${{ secrets.NPM_EMAIL }}
           AGORA_CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
         run: |
-          npx axe-linter-connector https://localhost:3000 \
+          npx axe-linter-connector \
+            --source=https://localhost:3000 \
             --client-id=$AGORA_CLIENT_ID \
             --client-secret=$AGORA_CLIENT_SECRET \
             --api-key=$DEQUE_API_KEY \
-            --source=https://localhost:3000 \
-            --destination=axe-report.json \
-            --reporter=json \
             --output=axe-report.json
+
 
 
 
