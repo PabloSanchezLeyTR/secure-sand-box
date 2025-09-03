@@ -111,7 +111,7 @@ jobs:
             --client-id=${{ secrets.CLIENT_ID }} \
             --client-secret=${{ secrets.CLIENT_SECRET }} \
             --api-key=${{ secrets.API_KEY }} \
-            --local=false \
+            --local=true \
             --source=./pablo-sand-box
 
 
