@@ -1,3 +1,4 @@
 files:
   include:
+    - ../index.html
     - ./app.component.html
