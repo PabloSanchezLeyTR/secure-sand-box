@@ -106,6 +106,7 @@ jobs:
 
       - name: Ejecutar axe-linter
         run: |
+          set -x
           mkdir -p ./dist/reports
           ./axe-linter-connector-macos \
             --url=http://localhost:4200 \
@@ -116,6 +117,11 @@ jobs:
             --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
             --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box
+
+      - name: Mostrar contenido del reporte (debug temporal)
+        run: |
+          cat ./dist/reports/axe-report.json || echo "No se encontró el reporte"
+
 
       - name: Upload axe report
         env:
