@@ -104,6 +104,19 @@ jobs:
           nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
           sleep 20  # espera a que el servidor esté listo
 
+      - name: Verificar binario de axe-linter
+        run: |
+          ./axe-linter-connector-macos --version || echo "No se pudo obtener la versión"
+
+      - name: Mostrar archivos incluidos en el análisis
+        run: |
+          echo "Archivos en source:"
+          find ./pablo-sand-box/src/app -name "*.html"
+          echo "Contenido de .axe-linter.yml:"
+          cat ./pablo-sand-box/src/app/.axe-linter.yml
+
+
+
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports

@@ -2,3 +2,7 @@ files:
   include:
     - ../index.html
     - ./test.html
+
+rules:
+  include:
+    - all
