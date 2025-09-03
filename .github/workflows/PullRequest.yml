@@ -99,17 +99,10 @@ jobs:
           chmod +x axe-linter-connector-macos
           xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
-      - name: Build Angular app
+      - name: Levantar servidor Angular en segundo plano
         run: |
-          cd pablo-sand-box
-          npm ci
-          npm run build
-
-      - name: Servir HTML estático con http-server
-        run: |
-          npm install -g http-server
-          nohup http-server ./pablo-sand-box/dist/pablo-sand-box -p 8080 > /dev/null 2>&1 &
-          sleep 10
+          nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
+          sleep 30  # espera a que el servidor esté listo
 
       - name: Verificar binario de axe-linter
         run: |
@@ -122,10 +115,26 @@ jobs:
           echo "Contenido de .axe-linter.yml:"
           cat ./pablo-sand-box/src/.axe-linter.yml
 
+
       - name: Mostrar estructura del repo con find
         run: |
           echo "Estructura del repo:"
           find . -type f | sort
+
+
+      - name: Verificar que Angular esté corriendo en localhost:4200
+        run: |
+          for i in {1..10}; do
+            if curl --silent --fail http://localhost:4200 > /dev/null; then
+              echo "✅ Angular está corriendo en http://localhost:4200"
+              exit 0
+            else
+              echo "⏳ Esperando que Angular esté disponible... (intento $i)"
+              sleep 3
+            fi
+          done
+          echo "❌ Angular no respondió en http://localhost:4200"
+          exit 1
 
       - name: Crear archivo dummy para source
         run: |
@@ -133,21 +142,11 @@ jobs:
           echo "<!DOCTYPE html><html><head><title>dummy</title></head><body></body></html>" > ./dummy/dummy.html
 
 
-      - name: Validar archivos fuente y configuración
-        run: |
-          echo "Validando archivos fuente..."
-          ls -l ./pablo-sand-box/src/index.html
-          ls -l ./pablo-sand-box/src/app/test.html
-          ls -l ./pablo-sand-box/src/app/app.component.html
-          echo "Validando archivo de configuración..."
-          cat ./pablo-sand-box/src/.axe-linter.yml
-
-
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
           ./axe-linter-connector-macos \
-          --url=http://localhost:8080 \
+          --local
           --wait-for=10000 \
           --browser=chromium \
           --include="body *" \
@@ -158,12 +157,15 @@ jobs:
           --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
           --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
           --tags=wcag2a,wcag2aa,best-practice \
-          --source=./pablo-sand-box/dist/pablo-sand-box \
+          --source=./pablo-sand-box/src
           --debug
+
+
 
       - name: Mostrar contenido del reporte (debug temporal)
         run: |
           cat ./dist/reports/axe-report.json || echo "No se encontró el reporte"
+
 
       - name: Upload axe report
         env:
