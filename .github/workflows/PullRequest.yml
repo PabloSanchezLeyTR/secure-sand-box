@@ -100,6 +100,17 @@ jobs:
           xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
 
+      - name: Verificar secretos (debug temporal)
+        run: |
+          echo "API_KEY: ${API_KEY:+presente}"
+          echo "CLIENT_ID: ${CLIENT_ID:+presente}"
+          echo "CLIENT_SECRET: ${CLIENT_SECRET:+presente}"
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
