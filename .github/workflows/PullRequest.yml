@@ -149,7 +149,7 @@ jobs:
           --url=http://localhost:4200/ \
           --wait-for=10000 \
           --browser=chromium \
-          --include="body, app-root" \
+          --include="body *" \
           --reporter=sonarqube \
           --destination=./dist/reports \
           --filename=axe-report.json \
