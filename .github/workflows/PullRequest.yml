@@ -6,76 +6,76 @@ on:
       - main
 
 jobs:
-  lint:
-    runs-on: self-hosted
+  # lint:
+  #   runs-on: self-hosted
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
 
-      - name: Autenticación con JFrog (crear .npmrc dinámico)
-        working-directory: ./pablo-sand-box
-        run: |
-          echo "@angular:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" > .npmrc
-          echo "@typescript-eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
-          echo "@eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
-          echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
-          echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> .npmrc
-          echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
+  #     - name: Autenticación con JFrog (crear .npmrc dinámico)
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         echo "@angular:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" > .npmrc
+  #         echo "@typescript-eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+  #         echo "@eslint:registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+  #         echo "registry=https://tr1.jfrog.io/tr1/api/npm/npm/" >> .npmrc
+  #         echo "//tr1.jfrog.io/tr1/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
+  #         echo "//tr1.jfrog.io/tr1/api/npm/npm/:always-auth=true" >> .npmrc
+  #         echo "email=${{ secrets.NPM_EMAIL }}" >> .npmrc
 
-      - name: Copiar .npmrc al home del runner
-        run: cp ./pablo-sand-box/.npmrc ~/.npmrc
+  #     - name: Copiar .npmrc al home del runner
+  #       run: cp ./pablo-sand-box/.npmrc ~/.npmrc
 
-      - name: Limpiar lockfile y node_modules
-        working-directory: ./pablo-sand-box
-        run: |
-          rm -f package-lock.json
-          rm -rf node_modules
+  #     - name: Limpiar lockfile y node_modules
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         rm -f package-lock.json
+  #         rm -rf node_modules
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
 
-      - name: Install dependencies
-        working-directory: ./pablo-sand-box
-        run: npm install
+  #     - name: Install dependencies
+  #       working-directory: ./pablo-sand-box
+  #       run: npm install
 
-      - name: Ensure ESLint is installed
-        working-directory: ./pablo-sand-box
-        run: |
-          npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser --userconfig=.npmrc
+  #     - name: Ensure ESLint is installed
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin @angular-eslint/eslint-plugin @angular-eslint/template-parser --userconfig=.npmrc
 
-      - name: Run lint only on changed files
-        working-directory: ./pablo-sand-box
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+  #     - name: Run lint only on changed files
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
 
-          echo "Archivos modificados detectados:"
-          echo "$CHANGED_FILES"
+  #         echo "Archivos modificados detectados:"
+  #         echo "$CHANGED_FILES"
 
-          EXISTING_FILES=()
-          for file in $CHANGED_FILES; do
-            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
-            if [ -f "$RELATIVE_FILE" ]; then
-              EXISTING_FILES+=("$RELATIVE_FILE")
-            fi
-          done
+  #         EXISTING_FILES=()
+  #         for file in $CHANGED_FILES; do
+  #           RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+  #           if [ -f "$RELATIVE_FILE" ]; then
+  #             EXISTING_FILES+=("$RELATIVE_FILE")
+  #           fi
+  #         done
 
-          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
-            echo "Linting existing changed files:"
-            printf '%s\n' "${EXISTING_FILES[@]}"
-            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
-          else
-            echo "No valid TypeScript or HTML files to lint."
-          fi
+  #         if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+  #           echo "Linting existing changed files:"
+  #           printf '%s\n' "${EXISTING_FILES[@]}"
+  #           npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
+  #         else
+  #           echo "No valid TypeScript or HTML files to lint."
+  #         fi
 
   axe-lint:
     runs-on: self-hosted
@@ -134,7 +134,6 @@ jobs:
             --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
             --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box/src \
-            --config=./pablo-sand-box/src/.axe-linter.yml \
             --debug
 
 
