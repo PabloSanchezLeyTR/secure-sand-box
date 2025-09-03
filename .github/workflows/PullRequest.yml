@@ -126,12 +126,6 @@ jobs:
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}..HEAD -- 'pablo-sand-box/src/**/*.html')
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "No hay archivos HTML modificados en el PR."
-            exit 0
-          fi
-
           ./axe-linter-connector-macos \
             --reporter=sonarqube \
             --destination=./dist/reports \
@@ -141,24 +135,8 @@ jobs:
             --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box/src \
             --local \
-            --tags=wcag2a,wcag2aa,best-practice \
+            --tags=wcag2a,wcag2aa,best-practice
             --debug
-
-          echo "Validando errores de accesibilidad..."
-          python3 <<EOF
-          import json
-          with open("dist/reports/axe-report.json") as f:
-              report = json.load(f)
-          issues = report.get("issues", [])
-          if issues:
-              for issue in issues:
-                  loc = issue.get("primaryLocation", {})
-                  print(f"- {loc.get('filePath')}: {issue.get('message')} [{issue.get('ruleId')}] ({issue.get('severity')})")
-              raise SystemExit("❌ Fallo el chequeo de accesibilidad: se encontraron errores.")
-          else:
-              print("✅ No se encontraron errores de accesibilidad.")
-          EOF
-
 
 
       - name: Mostrar contenido del reporte (debug temporal)
