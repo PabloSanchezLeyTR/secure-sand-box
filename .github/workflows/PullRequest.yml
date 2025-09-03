@@ -99,71 +99,58 @@ jobs:
           chmod +x axe-linter-connector-macos
           xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
-# Opcional: ver ayuda y (si existe) lista de reporters soportados.
-      - name: Mostrar ayuda del conector (opcional)
-        run: |
-          ./axe-linter-connector-macos --help || true
-          ./axe-linter-connector-macos --help-reporters || true
-          ./axe-linter-connector-macos --list-reporters || true
-
-
-
-      - name: Mover .axe-linter.yml a la raíz del proyecto
-        run: |
-          if [ -f "./pablo-sand-box/src/.axe-linter.yml" ]; then
-            mv ./pablo-sand-box/src/.axe-linter.yml ./pablo-sand-box/.axe-linter.yml
-          fi
-          echo "Usando config en: ./pablo-sand-box/.axe-linter.yml"
-          cat ./pablo-sand-box/.axe-linter.yml || true
-
-      - name: Levantar servidor Angular en segundo plano (opcional)
+      - name: Levantar servidor Angular en segundo plano
         run: |
           nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
-          # Health check (no falla el job si no levanta; es para debug y posible uso por URL)
-          for i in {1..60}; do
-            if curl -sSf http://localhost:4200 >/dev/null; then echo "Angular OK"; break; fi
-            sleep 2
-          done
-        continue-on-error: true
-
-          # Opcional: ver ayuda y (si existe) lista de reporters soportados.
-      - name: Mostrar ayuda del conector (opcional)
-        run: |
-          ./axe-linter-connector-macos --help || true
-          ./axe-linter-connector-macos --help-reporters || true
-          ./axe-linter-connector-macos --list-reporters || true
+          sleep 30  # espera a que el servidor esté listo
 
       - name: Verificar binario de axe-linter
-        run: ./axe-linter-connector-macos --version || echo "No se pudo obtener la versión"
+        run: |
+          ./axe-linter-connector-macos --version || echo "No se pudo obtener la versión"
 
-      - name: Ejecutar axe-linter (local, SonarQube)
-        working-directory: ./pablo-sand-box
+      - name: Mostrar archivos incluidos en el análisis
+        run: |
+          echo "Archivos en source:"
+          find ./pablo-sand-box/src -name "*.html"
+          echo "Contenido de .axe-linter.yml:"
+          cat ./pablo-sand-box/.axe-linter.yml
+
+
+      - name: Mostrar estructura del repo con find
+        run: |
+          echo "Estructura del repo:"
+          find . -type f | sort
+
+
+
+      - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
-          ../axe-linter-connector-macos \
+          ./axe-linter-connector-macos \
             --reporter=sonarqube \
             --destination=./dist/reports \
             --filename=axe-report.json \
-            --client-id='${{ secrets.NPM_EMAIL }}' \
-            --client-secret='${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}' \
-            --api-key='${{ secrets.AXE_LINTER_API_KEY }}' \
-            --source=http://localhost:4200 \
+            --client-id=${{ secrets.NPM_EMAIL }} \
+            --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
+            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
+            --source=./pablo-sand-box/src \
+            --local \
             --debug
 
 
-      - name: Mostrar contenido de reportes (debug)
+      - name: Mostrar contenido del reporte (debug temporal)
         run: |
-          echo "Reporte SonarQube:"
-          cat ./pablo-sand-box/dist/reports/axe-report.json || echo "No se encontró axe-report.json"
-          echo "Reporte RAW:"
-          cat ./pablo-sand-box/dist/reports/axe-report-raw.json || echo "No se encontró axe-report-raw.json"
+          cat ./dist/reports/axe-report.json || echo "No se encontró el reporte"
 
-      - name: Upload axe reports
+
+      - name: Upload axe report
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
         uses: actions/upload-artifact@v4
         with:
-          name: axe-accessibility-reports
-          path: |
-            ./pablo-sand-box/dist/reports/axe-report.json
-            ./pablo-sand-box/dist/reports/axe-report-raw.json
+          name: axe-accessibility-report
+          path: ./dist/reports/axe-report.json
+
+
 
 
