@@ -112,7 +112,8 @@ jobs:
             --client-secret=${{ secrets.CLIENT_SECRET }} \
             --api-key=${{ secrets.API_KEY }} \
             --local=false \
-            --source=./src
+            --source=./pablo-sand-box
+
 
       - name: Upload axe report
         uses: actions/upload-artifact@v4
