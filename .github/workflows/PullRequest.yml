@@ -99,9 +99,6 @@ jobs:
           chmod +x axe-linter-connector-macos
           xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
-      - name: Instalar dependencias
-        run: npm ci
-
       - name: Levantar servidor Angular en segundo plano
         run: |
           nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
@@ -126,4 +123,7 @@ jobs:
         with:
           name: axe-accessibility-report
           path: ./dist/reports/axe-report.json
+
+
+
 
