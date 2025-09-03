@@ -1,7 +1,8 @@
 files:
   include:
-    - ../index.html
-    - ./test.html
+    - ./index.html
+    - ./app/test.html
+    - ./app/app.component.html
 
 rules:
   include:
