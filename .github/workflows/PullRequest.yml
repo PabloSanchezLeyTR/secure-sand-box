@@ -106,9 +106,9 @@ jobs:
           echo "CLIENT_ID: ${CLIENT_ID:+presente}"
           echo "CLIENT_SECRET: ${CLIENT_SECRET:+presente}"
         env:
-          API_KEY: ${{ secrets.API_KEY }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          API_KEY: ${{ secrets.AXE_LINTER_API_KEY }}
+          CLIENT_ID: ${{ secrets.NPM_EMAIL }}
+          CLIENT_SECRET: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER}}
 
 
       - name: Ejecutar axe-linter
@@ -119,9 +119,9 @@ jobs:
             --reporter=sonarqube \
             --destination=./dist/reports \
             --filename=axe-report.json \
-            --client-id=${{ secrets.CLIENT_ID }} \
-            --client-secret=${{ secrets.CLIENT_SECRET }} \
-            --api-key=${{ secrets.API_KEY }} \
+            --client-id=${{ secrets.NPM_EMAIL }} \
+            --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER}} \
+            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --local=true \
             --source=./pablo-sand-box
 
