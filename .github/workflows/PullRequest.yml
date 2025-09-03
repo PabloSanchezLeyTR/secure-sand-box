@@ -122,20 +122,6 @@ jobs:
           find . -type f | sort
 
 
-      - name: Verificar que Angular esté corriendo en localhost:4200
-        run: |
-          for i in {1..10}; do
-            if curl --silent --fail http://localhost:4200 > /dev/null; then
-              echo "✅ Angular está corriendo en http://localhost:4200"
-              exit 0
-            else
-              echo "⏳ Esperando que Angular esté disponible... (intento $i)"
-              sleep 3
-            fi
-          done
-          echo "❌ Angular no respondió en http://localhost:4200"
-          exit 1
-
 
       - name: Ejecutar axe-linter
         run: |
@@ -148,8 +134,7 @@ jobs:
             --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
             --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box/src \
-            --url=http://localhost:4200/ \
-            --tags=wcag2a,wcag2aa,best-practice \
+            --local \
             --debug
 
 
