@@ -114,7 +114,7 @@ jobs:
             --filename=axe-report.json \
             --client-id=${{ secrets.NPM_EMAIL }} \
             --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
-            --api-key=${{ secrets.AXE_LINTER_API_KEY }}
+            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box
 
       - name: Upload axe report
