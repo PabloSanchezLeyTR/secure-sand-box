@@ -111,9 +111,9 @@ jobs:
       - name: Mostrar archivos incluidos en el análisis
         run: |
           echo "Archivos en source:"
-          find ./pablo-sand-box/src/app -name "*.html"
+          find ./pablo-sand-box/src -name "*.html"
           echo "Contenido de .axe-linter.yml:"
-          cat ./pablo-sand-box/src/app/.axe-linter.yml
+          cat ./pablo-sand-box/src/.axe-linter.yml
 
 
       - name: Mostrar estructura del repo con find
