@@ -136,12 +136,10 @@ jobs:
           ../axe-linter-connector-macos \
             --reporter=sonarqube \
             --destination=./dist/reports \
-            --filename=axe-linter-report.json \
+            --filename=axe-report.json \
             --client-id='${{ secrets.NPM_EMAIL }}' \
             --client-secret='${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}' \
-            --license-key='${{ secrets.AXE_LINTER_LICENSE_KEY }}' \
-            --issue-type=BUG \
-            --severity=MAJOR \
+            --api-key='${{ secrets.AXE_LINTER_API_KEY }}' \
             --source=. \
             --local \
             --debug
@@ -151,6 +149,8 @@ jobs:
         run: |
           echo "Reporte SonarQube:"
           cat ./pablo-sand-box/dist/reports/axe-report.json || echo "No se encontró axe-report.json"
+          echo "Reporte RAW:"
+          cat ./pablo-sand-box/dist/reports/axe-report-raw.json || echo "No se encontró axe-report-raw.json"
 
       - name: Upload axe reports
         uses: actions/upload-artifact@v4
