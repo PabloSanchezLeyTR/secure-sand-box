@@ -139,9 +139,9 @@ jobs:
         working-directory: ./pablo-sand-box
         run: |
           ../axe-linter-connector-macos \
-            --reporter=json \
+            --reporter=sarif \
             --destination=./dist/reports \
-            --filename=axe-report-raw.json \
+            --filename=axe-report.sarif \
             --client-id='${{ secrets.NPM_EMAIL }}' \
             --client-secret='${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}' \
             --api-key='${{ secrets.AXE_LINTER_API_KEY }}' \
