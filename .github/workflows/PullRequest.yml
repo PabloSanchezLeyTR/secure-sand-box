@@ -99,6 +99,15 @@ jobs:
           chmod +x axe-linter-connector-macos
           xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
+# Opcional: ver ayuda y (si existe) lista de reporters soportados.
+      - name: Mostrar ayuda del conector (opcional)
+        run: |
+          ./axe-linter-connector-macos --help || true
+          ./axe-linter-connector-macos --help-reporters || true
+          ./axe-linter-connector-macos --list-reporters || true
+
+
+
       - name: Mover .axe-linter.yml a la raíz del proyecto
         run: |
           if [ -f "./pablo-sand-box/src/.axe-linter.yml" ]; then
@@ -135,19 +144,6 @@ jobs:
             --local \
             --debug
 
-      - name: Ejecutar axe-linter (local, raw JSON adicional)
-        working-directory: ./pablo-sand-box
-        run: |
-          ../axe-linter-connector-macos \
-            --reporter=sarif \
-            --destination=./dist/reports \
-            --filename=axe-report.sarif \
-            --client-id='${{ secrets.NPM_EMAIL }}' \
-            --client-secret='${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}' \
-            --api-key='${{ secrets.AXE_LINTER_API_KEY }}' \
-            --source=. \
-            --local \
-            --debug
 
       - name: Mostrar contenido de reportes (debug)
         run: |
