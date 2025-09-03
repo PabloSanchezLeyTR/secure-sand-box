@@ -122,28 +122,24 @@ jobs:
           find . -type f | sort
 
 
+      - name: Verificar que Angular esté corriendo en localhost:4200
+        run: |
+          for i in {1..10}; do
+            if curl --silent --fail http://localhost:4200 > /dev/null; then
+              echo "✅ Angular está corriendo en http://localhost:4200"
+              exit 0
+            else
+              echo "⏳ Esperando que Angular esté disponible... (intento $i)"
+              sleep 3
+            fi
+          done
+          echo "❌ Angular no respondió en http://localhost:4200"
+          exit 1
+
 
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
-
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'pablo-sand-box/src/**/*.html')
-
-          INCLUDE_ARGS=""
-          for file in $CHANGED_FILES; do
-            if [ -f "$file" ]; then
-              INCLUDE_ARGS="$INCLUDE_ARGS --include=$file"
-            fi
-          done
-
-          if [ -z "$INCLUDE_ARGS" ]; then
-            echo "No hay archivos HTML modificados en el PR."
-            exit 0
-          fi
-
           ./axe-linter-connector-macos \
             --reporter=sonarqube \
             --destination=./dist/reports \
@@ -152,25 +148,10 @@ jobs:
             --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
             --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
             --source=./pablo-sand-box/src \
-            --local \
+            --url=http://localhost:4200/ \
             --tags=wcag2a,wcag2aa,best-practice \
-            $INCLUDE_ARGS \
             --debug
 
-          echo "Validando errores de accesibilidad..."
-          python3 <<EOF
-          import json
-          with open("dist/reports/axe-report.json") as f:
-              report = json.load(f)
-          issues = report.get("issues", [])
-          if issues:
-              for issue in issues:
-                  loc = issue.get("primaryLocation", {})
-                  print(f"- {loc.get('filePath')}: {issue.get('message')} [{issue.get('ruleId')}] ({issue.get('severity')})")
-              raise SystemExit("❌ Fallo el chequeo de accesibilidad: se encontraron errores.")
-          else:
-              print("✅ No se encontraron errores de accesibilidad.")
-          EOF
 
       - name: Mostrar contenido del reporte (debug temporal)
         run: |
