@@ -132,6 +132,17 @@ jobs:
           mkdir -p ./dummy
           echo "<!DOCTYPE html><html><head><title>dummy</title></head><body></body></html>" > ./dummy/dummy.html
 
+
+      - name: Validar archivos fuente y configuración
+        run: |
+          echo "Validando archivos fuente..."
+          ls -l ./pablo-sand-box/src/index.html
+          ls -l ./pablo-sand-box/src/app/test.html
+          ls -l ./pablo-sand-box/src/app/app.component.html
+          echo "Validando archivo de configuración..."
+          cat ./pablo-sand-box/src/.axe-linter.yml
+
+
       - name: Ejecutar axe-linter
         run: |
           mkdir -p ./dist/reports
