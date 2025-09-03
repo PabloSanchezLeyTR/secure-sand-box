@@ -146,18 +146,19 @@ jobs:
         run: |
           mkdir -p ./dist/reports
           ./axe-linter-connector-macos \
-            --url=http://localhost:4200/ \
-            --wait-for=10000 \
-            --browser=chromium \
-            --include="body, app-root" \
-            --reporter=sonarqube \
-            --destination=./dist/reports \
-            --filename=axe-report.json \
-            --client-id=${{ secrets.NPM_EMAIL }} \
-            --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
-            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
-            --tags=wcag2a,wcag2aa,best-practice \
-            --debug
+          --url=http://localhost:4200/ \
+          --wait-for=10000 \
+          --browser=chromium \
+          --include="body, app-root" \
+          --reporter=sonarqube \
+          --destination=./dist/reports \
+          --filename=axe-report.json \
+          --client-id=${{ secrets.NPM_EMAIL }} \
+          --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
+          --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
+          --tags=wcag2a,wcag2aa,best-practice \
+          --source=./dummy \
+          --debug
 
 
 
