@@ -115,6 +115,10 @@ jobs:
           echo "Contenido de .axe-linter.yml:"
           cat ./pablo-sand-box/src/app/.axe-linter.yml
 
+      - name: Mostrar estructura completa del repo
+        run: |
+          echo "Estructura del repo:"
+          tree -L 4
 
 
       - name: Ejecutar axe-linter
