@@ -7,10 +7,3 @@ files:
 rules:
   include:
     - all
-
-reporter:
-  type: sonarqube
-  outputDir: ./dist/reports
-  projectKey: my-project-key
-  serverUrl: http://localhost:9000
-  login: $SONAR_TOKEN
