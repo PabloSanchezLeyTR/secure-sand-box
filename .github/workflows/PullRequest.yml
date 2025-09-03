@@ -115,7 +115,7 @@ jobs:
         run: |
           mkdir -p ./dist/reports
           ./axe-linter-connector-macos \
-            --url=https://axe-linter.deque.com/ \
+            --url=https://localhost:3000 \
             --reporter=sonarqube \
             --destination=./dist/reports \
             --filename=axe-report.json \
