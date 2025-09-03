@@ -155,6 +155,7 @@ jobs:
             --source=./dummy \
             --url=http://localhost:4200/ \
             --tags=wcag2a,wcag2aa,best-practice \
+            --wait-for=5000 \
             --debug
 
 
