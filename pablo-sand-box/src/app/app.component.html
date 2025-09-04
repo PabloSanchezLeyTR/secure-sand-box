@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Test Axe</title>
-</head>
-<body>
-  <h1>Prueba de accesibilidad</h1>
-  assets/logo.png
-  <button></button>
-  <a>Haz clic aquí</a>
-  <div style="color: #ccc; background-color: #eee;">Texto con bajo contraste</div>
-  <div role="button" tabindex="-1">Botón falso</div>
-</body>
-</html>
+<!-- Basic static accessibility errors for axe-linter testing -->
+<button></button> <!-- Empty button -->
+<img src="assets/logo.png"> <!-- Image without alt -->
+<div style="color: #ccc; background-color: #eee;">Low contrast text</div>
+<a href="#">Click here</a> <!-- Link with generic text -->
+<h3>Subheading without h2</h3> <!-- Heading structure error -->
+<input type="text" id="name"> <!-- Input without label -->
+<div id="duplicate"></div><div id="duplicate"></div> <!-- Non-unique IDs -->
+<table><tr><td>Data</td></tr></table> <!-- Table without headers -->

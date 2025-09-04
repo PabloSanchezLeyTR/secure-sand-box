@@ -1,25 +1,20 @@
-const unusedVariable = 123;
-var nombre = "Pablo";
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `
+    <!-- Basic static accessibility errors for axe-linter testing -->
+    <button></button> <!-- Empty button -->
+    <img src="assets/logo.png"> <!-- Image without alt -->
+    <div style="color: #ccc; background-color: #eee;">Low contrast text</div>
+    <a href="#">Click here</a> <!-- Link with generic text -->
+    <h3>Subheading without h2</h3> <!-- Heading structure error -->
+    <input type="text" id="name"> <!-- Input without label -->
+    <div id="duplicate"></div><div id="duplicate"></div> <!-- Non-unique IDs -->
+    <table><tr><td>Data</td></tr></table> <!-- Table without headers -->
+  `,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'pablo-sand-box';
-
-  saludar() {
-    console.log("Hola");
-    let nombre_usuario = "Pablo";
-
-    console.log("Hola mundo")
-  }
-
-
- sinUso() {
-  return true;
-}
-
 }
