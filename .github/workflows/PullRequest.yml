@@ -119,3 +119,31 @@ jobs:
           path: ./dist/reports/axe-report.json
 
 
+  accessibility-playwright:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./pablo-sand-box
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: ./pablo-sand-box
+        run: npx playwright install
+
+      - name: Start Angular server in background
+        working-directory: ./pablo-sand-box
+        run: |
+          nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
+          sleep 30
+
+      - name: Run Playwright accessibility tests
+        working-directory: ./pablo-sand-box
+        run: npx playwright test --grep accessibility
