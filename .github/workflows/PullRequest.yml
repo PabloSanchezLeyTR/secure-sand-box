@@ -146,4 +146,4 @@ jobs:
 
       - name: Run Playwright accessibility tests
         working-directory: ./pablo-sand-box
-        run: npx playwright test src/accessibility.spec.ts
+        run: npx playwright test
