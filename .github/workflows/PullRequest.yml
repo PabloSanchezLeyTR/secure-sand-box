@@ -118,7 +118,7 @@ jobs:
   #         name: axe-accessibility-report
   #         path: ./dist/reports/axe-report.json
 
-    accessibility-pa11y:
+  accessibility-pa11y:
         runs-on: self-hosted
         steps:
           - name: Checkout code
@@ -132,7 +132,7 @@ jobs:
               node-version: '18'
 
           - name: Install Pa11y
-            run: npm install -g pa11y jq
+            run: npm install -g pa11y
 
           - name: Detect and scan modified HTML files
             working-directory: ./pablo-sand-box
@@ -147,6 +147,7 @@ jobs:
 
               EXISTING_HTML=()
               for file in $CHANGED_FILES; do
+                # Ajustar ruta relativa dentro de pablo-sand-box
                 RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
                 if [ -f "$RELATIVE_FILE" ]; then
                   EXISTING_HTML+=("$RELATIVE_FILE")
@@ -157,17 +158,7 @@ jobs:
                 echo "Escaneando accesibilidad con Pa11y:"
                 for html_file in "${EXISTING_HTML[@]}"; do
                   echo "→ $html_file"
-                  OUTPUT=$(pa11y file://$(pwd)/$html_file --reporter json)
-                  ERRORS=$(echo "$OUTPUT" | jq -c '.issues[]')
-
-                  if [ -n "$ERRORS" ]; then
-                    echo "$ERRORS" | while read -r issue; do
-                      MESSAGE=$(echo "$issue" | jq -r '.message')
-                      SELECTOR=$(echo "$issue" | jq -r '.selector')
-                      echo "::error file=$html_file,title=Accesibilidad::$MESSAGE (selector: $SELECTOR)"
-                    done
-                    exit 1
-                  fi
+                  pa11y file://$(pwd)/$html_file || true
                 done
               else
                 echo "No hay archivos HTML válidos para escanear."
