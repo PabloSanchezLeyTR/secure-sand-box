@@ -1,8 +1,10 @@
-
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import fs from 'fs';
 
-const rutas = ['/', '/ruta1', '/ruta2']; // Puedes personalizar las rutas aquí
+const rutas = fs.existsSync('tests/pr_routes.txt')
+  ? fs.readFileSync('tests/pr_routes.txt', 'utf-8').split('\n').filter(Boolean)
+  : ['/'];
 
 test('accessibility scan en rutas modificadas', async ({ page }) => {
   for (const ruta of rutas) {

@@ -143,6 +143,35 @@ jobs:
         run: |
           nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
           sleep 30
+        
+      - name: Detect changed files and map to routes
+        working-directory: ./pablo-sand-box
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/app/**/*.ts' 'src/app/**/*.html')
+          echo "Archivos modificados: $CHANGED_FILES"
+          ROUTES=()
+          for file in $CHANGED_FILES; do
+            # Extrae la ruta del componente, asumiendo estructura src/app/rutaX/
+            if [[ $file =~ src/app/([^/]+)/ ]]; then
+              route="/${BASH_REMATCH[1]}"
+              ROUTES+=("$route")
+            fi
+            # Si es el componente principal, agrega '/'
+            if [[ $file == src/app/app.component* ]]; then
+              ROUTES+=("/")
+            fi
+          done
+          # Elimina duplicados
+          UNIQUE_ROUTES=($(printf "%s\n" "${ROUTES[@]}" | sort -u))
+          echo "Rutas a inspeccionar: ${UNIQUE_ROUTES[@]}"
+          printf "%s\n" "${UNIQUE_ROUTES[@]}" > tests/pr_routes.txt
+
+      - name: Run Playwright accessibility tests
+        working-directory: ./pablo-sand-box
+        run: npx playwright test tests/
 
       - name: Run Playwright accessibility tests
         working-directory: ./pablo-sand-box
