@@ -1,0 +1,9 @@
+files:
+  include:
+    - ./index.html
+    - ./app/test.html
+    - ./app/app.component.html
+
+rules:
+  include:
+    - all
