@@ -131,17 +131,8 @@ jobs:
             with:
               node-version: '18'
 
-          - name: Install Pa11y and jq
-            run: |
-              npm install -g pa11y
-              if ! command -v jq &> /dev/null; then
-                if [[ "$RUNNER_OS" == "Linux" ]]; then
-                  sudo apt-get update && sudo apt-get install -y jq
-                elif [[ "$RUNNER_OS" == "macOS" ]]; then
-                  brew install jq
-                fi
-              fi
-
+          - name: Install Pa11y
+            run: npm install -g pa11y jq
 
           - name: Detect and scan modified HTML files
             working-directory: ./pablo-sand-box
@@ -162,33 +153,22 @@ jobs:
                 fi
               done
 
-              HAS_ERRORS=0
-
               if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
                 echo "Escaneando accesibilidad con Pa11y:"
                 for html_file in "${EXISTING_HTML[@]}"; do
                   echo "→ $html_file"
-                  OUTPUT=$(pa11y file://$(pwd)/"$html_file" --reporter json 2>/dev/null || true)
+                  OUTPUT=$(pa11y file://$(pwd)/$html_file --reporter json)
+                  ERRORS=$(echo "$OUTPUT" | jq -c '.issues[]')
 
-                  if [ -n "$OUTPUT" ]; then
-                    ERRORS=$(echo "$OUTPUT" | jq -c '.issues[]')
-                    if [ -n "$ERRORS" ]; then
-                      echo "$ERRORS" | while read -r issue; do
-                        MESSAGE=$(echo "$issue" | jq -r '.message')
-                        SELECTOR=$(echo "$issue" | jq -r '.selector')
-                        echo "::error file=$html_file,title=Accesibilidad::$MESSAGE (selector: $SELECTOR)"
-                      done
-                      HAS_ERRORS=1
-                    fi
+                  if [ -n "$ERRORS" ]; then
+                    echo "$ERRORS" | while read -r issue; do
+                      MESSAGE=$(echo "$issue" | jq -r '.message')
+                      SELECTOR=$(echo "$issue" | jq -r '.selector')
+                      echo "::error file=$html_file,title=Accesibilidad::$MESSAGE (selector: $SELECTOR)"
+                    done
+                    exit 1
                   fi
                 done
               else
                 echo "No hay archivos HTML válidos para escanear."
-              fi
-
-              if [ "$HAS_ERRORS" -eq 1 ]; then
-                echo "Errores de accesibilidad detectados."
-                exit 1
-              else
-                echo "Sin errores de accesibilidad."
               fi
