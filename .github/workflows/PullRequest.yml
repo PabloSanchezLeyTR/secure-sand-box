@@ -120,6 +120,7 @@ jobs:
 
 
   accessibility-playwright:
+
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -133,6 +134,14 @@ jobs:
       - name: Install dependencies
         working-directory: ./pablo-sand-box
         run: npm ci
+
+      - name: Get changed files in PR
+        working-directory: ./pablo-sand-box
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF || true
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD || echo "")
+          git diff --name-only $MERGE_BASE..HEAD -- 'src/app/**/*.ts' 'src/app/**/*.html' > changed_files.txt || true
 
       - name: Install Playwright browsers
         working-directory: ./pablo-sand-box
@@ -175,6 +184,10 @@ jobs:
       - name: Run Playwright accessibility tests
         working-directory: ./pablo-sand-box
         run: npx playwright test tests/
+
+      - name: Filtrar reporte de accesibilidad por archivos modificados
+        working-directory: ./pablo-sand-box
+        run: node filter-axe-report.js
 
       - name: Run Playwright accessibility tests
         working-directory: ./pablo-sand-box

@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import * as fs from 'fs';
@@ -7,10 +8,12 @@ const rutas = fs.existsSync('tests/pr_routes.txt')
   : ['/'];
 
 test('accessibility scan en rutas modificadas', async ({ page }) => {
+  const allResults: { violations: unknown[] } = { violations: [] };
   for (const ruta of rutas) {
     await page.goto(`http://localhost:4200${ruta}`);
     const results = await new AxeBuilder({ page }).analyze();
-  // Si hay violaciones, el test fallará con expect, no se imprime nada en consola
-    expect(results.violations).toEqual([]);
+    allResults.violations.push(...results.violations);
   }
+  fs.writeFileSync('axe-report.json', JSON.stringify(allResults, null, 2));
+  expect(allResults.violations).toEqual([]);
 });
