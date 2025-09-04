@@ -57,6 +57,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Install jq
+        run: |
+          which jq || brew install jq || sudo apt-get install -y jq
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
