@@ -147,8 +147,10 @@ jobs:
 
               EXISTING_HTML=()
               for file in $CHANGED_FILES; do
-                if [ -f "$file" ]; then
-                  EXISTING_HTML+=("$file")
+                # Ajustar ruta relativa dentro de pablo-sand-box
+                RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+                if [ -f "$RELATIVE_FILE" ]; then
+                  EXISTING_HTML+=("$RELATIVE_FILE")
                 fi
               done
 
@@ -161,4 +163,3 @@ jobs:
               else
                 echo "No hay archivos HTML válidos para escanear."
               fi
-
