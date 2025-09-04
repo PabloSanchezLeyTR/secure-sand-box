@@ -153,22 +153,33 @@ jobs:
                 fi
               done
 
+              HAS_ERRORS=0
+
               if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
                 echo "Escaneando accesibilidad con Pa11y:"
                 for html_file in "${EXISTING_HTML[@]}"; do
                   echo "→ $html_file"
-                  OUTPUT=$(pa11y file://$(pwd)/$html_file --reporter json)
-                  ERRORS=$(echo "$OUTPUT" | jq -c '.issues[]')
+                  OUTPUT=$(pa11y file://$(pwd)/"$html_file" --reporter json 2>/dev/null || true)
 
-                  if [ -n "$ERRORS" ]; then
-                    echo "$ERRORS" | while read -r issue; do
-                      MESSAGE=$(echo "$issue" | jq -r '.message')
-                      SELECTOR=$(echo "$issue" | jq -r '.selector')
-                      echo "::error file=$html_file,title=Accesibilidad::$MESSAGE (selector: $SELECTOR)"
-                    done
-                    exit 1
+                  if [ -n "$OUTPUT" ]; then
+                    ERRORS=$(echo "$OUTPUT" | jq -c '.issues[]')
+                    if [ -n "$ERRORS" ]; then
+                      echo "$ERRORS" | while read -r issue; do
+                        MESSAGE=$(echo "$issue" | jq -r '.message')
+                        SELECTOR=$(echo "$issue" | jq -r '.selector')
+                        echo "::error file=$html_file,title=Accesibilidad::$MESSAGE (selector: $SELECTOR)"
+                      done
+                      HAS_ERRORS=1
+                    fi
                   fi
                 done
               else
                 echo "No hay archivos HTML válidos para escanear."
+              fi
+
+              if [ "$HAS_ERRORS" -eq 1 ]; then
+                echo "Errores de accesibilidad detectados."
+                exit 1
+              else
+                echo "Sin errores de accesibilidad."
               fi
