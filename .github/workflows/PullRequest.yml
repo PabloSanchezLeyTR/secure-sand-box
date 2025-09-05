@@ -168,13 +168,14 @@ jobs:
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
             echo "Escaneando accesibilidad con Pa11y y generando anotaciones con línea real (si es posible):"
-            # Limpiar node_modules y package-lock para evitar conflictos de dependencias modernas
-            rm -rf ../node_modules ../package-lock.json
-            npm install cheerio@1 --prefix .. > /dev/null 2>&1
+            # Instalar cheerio@1 en un entorno temporal aislado
+            rm -rf .pa11y-tmp
+            mkdir -p .pa11y-tmp
+            npm install cheerio@1 --prefix .pa11y-tmp > /dev/null 2>&1
             for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
               pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
-              node ../pa11y-annotate.js "$html_file" pa11y-report.json || true
+              NODE_PATH="$(pwd)/.pa11y-tmp/node_modules" node ../pa11y-annotate.js "$html_file" pa11y-report.json || true
               ERRORS=$((ERRORS+$(jq '. | map(select(.type=="error")) | length' pa11y-report.json)))
             done
           else
