@@ -26,39 +26,29 @@ function findNodeBySelector(root, selector) {
     // Usar css-select sobre el árbol de parse5
     return cssSelect.selectOne(selector, root);
   } catch (e) {
-    return null;
-  }
-}
+    const fs = require('fs');
+    const path = require('path');
 
-
-function getLineForSelector(selector) {
-  // 1. Intentar con parse5 y css-select
-  const node = findNodeBySelector(document, selector);
-  if (node && node.sourceCodeLocation && node.sourceCodeLocation.startLine) {
-    return node.sourceCodeLocation.startLine;
-  }
-  // 2. Fallback a cheerio (como antes)
-  try {
-    const $ = cheerio.load(htmlContent, { xmlMode: false, withStartIndices: true });
-    const el = $(selector)[0];
-    if (el && el.startIndex !== undefined) {
-      const before = htmlContent.slice(0, el.startIndex);
-      return before.split('\n').length;
+    if (process.argv.length < 4) {
+      console.error('Uso: node pa11y-annotate.js <html-file> <pa11y-json-report>');
+      process.exit(1);
     }
-  } catch (e) {}
-  return 1;
-}
 
-pa11yReport.forEach(issue => {
-  if (issue.type === 'error') {
+    const htmlFile = process.argv[2];
+    const pa11yReportFile = process.argv[3];
+    const pa11yReport = JSON.parse(fs.readFileSync(pa11yReportFile, 'utf8'));
+
+    pa11yReport.forEach(issue => {
+      if (issue.type === 'error') {
+        const selector = issue.selector;
+        const line = 1; // Siempre línea 1
+        const message = `[Pa11y] ${issue.message} (selector: ${selector})`;
+        // Ruta relativa al root del repo
+        const repoRoot = path.resolve(__dirname);
+        const absHtml = path.resolve(htmlFile);
+        const relPath = path.relative(repoRoot, absHtml).replace(/\\/g, '/');
+        // Output para GitHub Actions
+        console.log(`::error file=${relPath},line=${line}::${message}`);
+      }
+    });
     const selector = issue.selector;
-    const line = getLineForSelector(selector);
-    const message = `[Pa11y] ${issue.message} (selector: ${selector})`;
-    // Ruta relativa al root del repo
-    const repoRoot = path.resolve(__dirname);
-    const absHtml = path.resolve(htmlFile);
-    const relPath = path.relative(repoRoot, absHtml).replace(/\\/g, '/');
-    // Output para GitHub Actions
-    console.log(`::error file=${relPath},line=${line}::${message}`);
-  }
-});
