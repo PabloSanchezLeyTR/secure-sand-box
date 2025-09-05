@@ -167,17 +167,13 @@ jobs:
 
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
-            echo "Escaneando accesibilidad con Pa11y y generando anotaciones:"
+            echo "Escaneando accesibilidad con Pa11y y generando anotaciones con línea real (si es posible):"
+            npm install cheerio > /dev/null 2>&1
             for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
               pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
-              jq -c '.[] | select(.type=="error")' pa11y-report.json | while read -r issue; do
-                MESSAGE=$(echo "$issue" | jq -r '.message')
-                SELECTOR=$(echo "$issue" | jq -r '.selector')
-                REPO_PATH="pablo-sand-box/$html_file"
-                echo "::error file=$REPO_PATH,line=1::[Pa11y] $MESSAGE (selector: $SELECTOR)"
-                ERRORS=$((ERRORS+1))
-              done
+              node ../pa11y-annotate.js "$html_file" pa11y-report.json || true
+              ERRORS=$((ERRORS+$(jq '. | map(select(.type=="error")) | length' pa11y-report.json)))
             done
           else
             echo "No hay archivos HTML válidos para escanear."
