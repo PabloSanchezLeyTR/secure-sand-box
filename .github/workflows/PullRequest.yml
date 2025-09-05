@@ -241,7 +241,11 @@ jobs:
           - Visual consistency and design best practices
           - Clean and maintainable code (especially in React or Angular)
           Code:\n\n$CONTENT"
-          echo "prompt=$PROMPT" >> $GITHUB_OUTPUT
+          {
+            echo 'prompt<<EOF'
+            echo "$PROMPT"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
 
       - name: Call GitHub Models API
         env:
