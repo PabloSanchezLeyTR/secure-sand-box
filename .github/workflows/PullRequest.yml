@@ -134,7 +134,9 @@ jobs:
       - name: Install Pa11y
         run: |
           npm install -g pa11y
-          npm install -g cheerio@1
+          cd ..
+          npm install cheerio@1 --no-save
+          cd pablo-sand-box
 
       - name: Detect and scan modified HTML files and annotate
         working-directory: ./pablo-sand-box
