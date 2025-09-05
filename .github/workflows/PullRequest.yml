@@ -134,7 +134,7 @@ jobs:
           - name: Install Pa11y
             run: npm install -g pa11y
 
-          - name: Detect and scan modified HTML files
+          - name: Detect and scan modified HTML files and annotate
             working-directory: ./pablo-sand-box
             run: |
               BASE_REF="${{ github.event.pull_request.base.ref }}"
@@ -145,9 +145,20 @@ jobs:
               echo "Archivos HTML modificados:"
               echo "$CHANGED_FILES"
 
+              # Instalar jq si no está disponible
+              if ! command -v jq &> /dev/null; then
+                if command -v brew &> /dev/null; then
+                  brew install jq
+                elif command -v apt-get &> /dev/null; then
+                  sudo apt-get update && sudo apt-get install -y jq
+                else
+                  echo "jq no está instalado y no se pudo instalar automáticamente."
+                  exit 1
+                fi
+              fi
+
               EXISTING_HTML=()
               for file in $CHANGED_FILES; do
-                # Ajustar ruta relativa dentro de pablo-sand-box
                 RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
                 if [ -f "$RELATIVE_FILE" ]; then
                   EXISTING_HTML+=("$RELATIVE_FILE")
@@ -155,10 +166,15 @@ jobs:
               done
 
               if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
-                echo "Escaneando accesibilidad con Pa11y:"
+                echo "Escaneando accesibilidad con Pa11y y generando anotaciones:"
                 for html_file in "${EXISTING_HTML[@]}"; do
                   echo "→ $html_file"
-                  pa11y file://$(pwd)/$html_file || true
+                  pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
+                  jq -c '.[] | select(.type=="error")' pa11y-report.json | while read -r issue; do
+                    MESSAGE=$(echo "$issue" | jq -r '.message')
+                    SELECTOR=$(echo "$issue" | jq -r '.selector')
+                    echo "::error file=$html_file::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+                  done
                 done
               else
                 echo "No hay archivos HTML válidos para escanear."
