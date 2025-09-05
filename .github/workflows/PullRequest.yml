@@ -145,8 +145,8 @@ jobs:
               echo "Archivos HTML modificados:"
               echo "$CHANGED_FILES"
 
-              # Instalar jq si no está disponible
-              if ! command -v jq &> /dev/null; then
+              # Instalar jq si no está disponible o si es el de npm (incorrecto)
+              if ! command -v jq &> /dev/null || jq --version 2>&1 | grep -qi 'npm'; then
                 if command -v brew &> /dev/null; then
                   brew install jq
                 elif command -v apt-get &> /dev/null; then
