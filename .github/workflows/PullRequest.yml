@@ -135,7 +135,7 @@ jobs:
         run: |
           npm install -g pa11y
           cd ..
-          npm install cheerio@1 --no-save
+          npm install cheerio@1 --no-save --registry=https://registry.npmjs.org/
           cd pablo-sand-box
 
       - name: Detect and scan modified HTML files and annotate
