@@ -119,3 +119,71 @@ jobs:
           path: ./dist/reports/axe-report.json
 
 
+  accessibility-pa11y:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Pa11y
+        run: npm install -g pa11y
+
+      - name: Detect and scan modified HTML files and annotate
+        working-directory: ./pablo-sand-box
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
+
+          echo "Archivos HTML modificados:"
+          echo "$CHANGED_FILES"
+
+          EXISTING_HTML=()
+          for file in $CHANGED_FILES; do
+            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+            if [ -f "$RELATIVE_FILE" ]; then
+              EXISTING_HTML+=("$RELATIVE_FILE")
+            fi
+          done
+
+          ERRORS=0
+          if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
+            echo "Escaneando accesibilidad con Pa11y y generando anotaciones (línea estimada):"
+            for html_file in "${EXISTING_HTML[@]}"; do
+              echo "→ $html_file"
+              pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
+              ERRORS_FILE=$(mktemp)
+              jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
+              while read -r issue; do
+                MESSAGE=$(echo "$issue" | jq -r '.message')
+                SELECTOR=$(echo "$issue" | jq -r '.selector')
+                REPO_PATH="pablo-sand-box/$html_file"
+                # Solo para selectores simples: input, button, img, etc.
+                SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
+                if [ -n "$SIMPLE_SELECTOR" ]; then
+                  LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
+                  if [ -z "$LINE" ]; then LINE=1; fi
+                else
+                  LINE=1
+                fi
+                echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+              done < "$ERRORS_FILE"
+              ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
+              rm "$ERRORS_FILE"
+            done
+          else
+            echo "No hay archivos HTML válidos para escanear."
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Errores de accesibilidad detectados: $ERRORS"
+            exit 1
+          fi
