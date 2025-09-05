@@ -34,7 +34,11 @@ pa11yReport.forEach(issue => {
     const selector = issue.selector;
     const line = getLineForSelector(selector);
     const message = `[Pa11y] ${issue.message} (selector: ${selector})`;
+    // Ruta relativa al root del repo
+    const repoRoot = path.resolve(__dirname);
+    const absHtml = path.resolve(htmlFile);
+    const relPath = path.relative(repoRoot, absHtml).replace(/\\/g, '/');
     // Output para GitHub Actions
-    console.log(`::error file=${htmlFile},line=${line}::${message}`);
+    console.log(`::error file=${relPath},line=${line}::${message}`);
   }
 });

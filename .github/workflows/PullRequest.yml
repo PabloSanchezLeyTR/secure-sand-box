@@ -172,11 +172,11 @@ jobs:
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
             echo "Escaneando accesibilidad con Pa11y y generando anotaciones con línea real (si es posible):"
-            for html_file in "${EXISTING_HTML[@]}"; do
+              for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
               pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
               node ../pa11y-annotate.js "$html_file" pa11y-report.json || true
-              ERRORS=$((ERRORS+$(jq '. | map(select(.type==\"error\")) | length' pa11y-report.json)))
+                ERRORS=$((ERRORS + $(jq '. | map(select(.type=="error")) | length' pa11y-report.json)))
             done
           else
             echo "No hay archivos HTML válidos para escanear."
