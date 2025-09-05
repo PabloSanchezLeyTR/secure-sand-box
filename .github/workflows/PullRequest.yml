@@ -198,23 +198,46 @@ jobs:
       - name: Detect changed UX-related files
         id: changed
         run: |
+          set -e
           BASE_REF="${{ github.event.pull_request.base.ref }}"
+          echo "BASE_REF: $BASE_REF"
           git fetch origin $BASE_REF
           MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          echo "MERGE_BASE: $MERGE_BASE"
           FILES=$(git diff --name-only $MERGE_BASE..HEAD | grep -E '\.css$|\.scss$|\.less$|\.html$|\.js$|\.ts$|\.tsx$|\.jsx$' | paste -sd ',' -)
+          echo "Detected files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
 
       - name: Prepare prompt for GitHub Models
         id: prompt
         run: |
           FILES="${{ steps.changed.outputs.files }}"
-          echo "Analizando archivos: $FILES"
-          CONTENT=$(cat $(echo $FILES | tr ',' ' '))
-          PROMPT="Eres un experto en UX y accesibilidad. Revisa el siguiente código (HTML, CSS, JS/TS) y sugiere mejoras en:
-          - Accesibilidad (uso de roles, aria, foco, navegación)
-          - Consistencia visual y buenas prácticas de diseño
-          - Código limpio y mantenible (especialmente en React o Angular)
-          Código:\n\n$CONTENT"
+          echo "Analyzing files: $FILES"
+          if [ -z "$FILES" ]; then
+            echo "No UX-related files changed."
+            echo "prompt=No UX-related files changed in this PR." >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          FILE_LIST=$(echo $FILES | tr ',' ' ')
+          EXISTING_FILES=""
+          for f in $FILE_LIST; do
+            if [ -f "$f" ]; then
+              EXISTING_FILES="$EXISTING_FILES $f"
+            else
+              echo "Warning: $f does not exist."
+            fi
+          done
+          if [ -z "$EXISTING_FILES" ]; then
+            echo "No existing files to analyze."
+            echo "prompt=No existing UX-related files to analyze in this PR." >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          CONTENT=$(cat $EXISTING_FILES)
+          PROMPT="You are an expert in UX and accessibility. Review the following code (HTML, CSS, JS/TS) and suggest improvements in:
+          - Accessibility (use of roles, aria, focus, navigation)
+          - Visual consistency and design best practices
+          - Clean and maintainable code (especially in React or Angular)
+          Code:\n\n$CONTENT"
           echo "prompt=$PROMPT" >> $GITHUB_OUTPUT
 
       - name: Call GitHub Models API
@@ -242,5 +265,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🧠 **Sugerencias de IA para UX y Accesibilidad**:\n\n${message}`
+              body: `🧠 **AI Suggestions for UX and Accessibility**:\n\n${message}`
             });
