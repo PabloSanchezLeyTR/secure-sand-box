@@ -110,6 +110,18 @@ jobs:
             exit 1
           fi
 
+      - name: Annotate axe-lint accessibility errors
+        run: |
+          if [ -f ./dist/reports/axe-report.json ]; then
+            jq -c '.issues[]' ./dist/reports/axe-report.json | while read -r issue; do
+              FILE=$(echo "$issue" | jq -r '.component' | sed 's|^pablo-sand-box/||')
+              LINE=$(echo "$issue" | jq -r '.textRange.startLine // 1')
+              MESSAGE=$(echo "$issue" | jq -r '.message')
+              # Ajusta la ruta si es necesario para que coincida con el PR
+              echo "::error file=pablo-sand-box/$FILE,line=$LINE::[axe-lint] $MESSAGE"
+            done
+          fi
+
       - name: Upload axe report
         env:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
