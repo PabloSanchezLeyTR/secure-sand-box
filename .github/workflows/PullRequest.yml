@@ -168,8 +168,8 @@ jobs:
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
             echo "Escaneando accesibilidad con Pa11y y generando anotaciones con línea real (si es posible):"
-            # Limpiar posibles instalaciones previas de cheerio y package-lock
-            rm -rf ../node_modules/cheerio* ../package-lock.json
+            # Limpiar node_modules y package-lock para evitar conflictos de dependencias modernas
+            rm -rf ../node_modules ../package-lock.json
             npm install cheerio@1 --prefix .. > /dev/null 2>&1
             for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
