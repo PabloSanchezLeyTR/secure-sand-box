@@ -236,14 +236,15 @@ jobs:
             exit 0
           fi
           CONTENT=$(cat $EXISTING_FILES)
-          PROMPT="You are an expert in UX and accessibility. Review the following code (HTML, CSS, JS/TS) and suggest improvements in:
-          - Accessibility (use of roles, aria, focus, navigation)
-          - Visual consistency and design best practices
-          - Clean and maintainable code (especially in React or Angular)
-          Code:\n\n$CONTENT"
           {
             echo 'prompt<<EOF'
-            echo "$PROMPT"
+            echo "You are an expert in UX and accessibility. Review the following code (HTML, CSS, JS/TS) and suggest improvements in:"
+            echo "- Accessibility (use of roles, aria, focus, navigation)"
+            echo "- Visual consistency and design best practices"
+            echo "- Clean and maintainable code (especially in React or Angular)"
+            echo "Code:"
+            echo
+            echo "$CONTENT"
             echo 'EOF'
           } >> $GITHUB_OUTPUT
 
