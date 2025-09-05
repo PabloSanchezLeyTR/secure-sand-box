@@ -168,7 +168,7 @@ jobs:
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
             echo "Escaneando accesibilidad con Pa11y y generando anotaciones con línea real (si es posible):"
-            npm install cheerio > /dev/null 2>&1
+            npm install cheerio --prefix .. > /dev/null 2>&1
             for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
               pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
