@@ -145,18 +145,6 @@ jobs:
           echo "Archivos HTML modificados:"
           echo "$CHANGED_FILES"
 
-          # Instalar jq si no está disponible o si es el de npm (incorrecto)
-          if ! command -v jq &> /dev/null || jq --version 2>&1 | grep -qi 'npm'; then
-            if command -v brew &> /dev/null; then
-              brew install jq
-            elif command -v apt-get &> /dev/null; then
-              sudo apt-get update && sudo apt-get install -y jq
-            else
-              echo "jq no está instalado y no se pudo instalar automáticamente."
-              exit 1
-            fi
-          fi
-
           EXISTING_HTML=()
           for file in $CHANGED_FILES; do
             RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
@@ -167,17 +155,28 @@ jobs:
 
           ERRORS=0
           if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
-            echo "Escaneando accesibilidad con Pa11y y generando anotaciones:"
+            echo "Escaneando accesibilidad con Pa11y y generando anotaciones (línea estimada):"
             for html_file in "${EXISTING_HTML[@]}"; do
               echo "→ $html_file"
               pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
-              jq -c '.[] | select(.type=="error")' pa11y-report.json | while read -r issue; do
+              ERRORS_FILE=$(mktemp)
+              jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
+              while read -r issue; do
                 MESSAGE=$(echo "$issue" | jq -r '.message')
                 SELECTOR=$(echo "$issue" | jq -r '.selector')
                 REPO_PATH="pablo-sand-box/$html_file"
-                echo "::error file=$REPO_PATH,line=1::[Pa11y] $MESSAGE (selector: $SELECTOR)"
-                ERRORS=$((ERRORS+1))
-              done
+                # Solo para selectores simples: input, button, img, etc.
+                SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
+                if [ -n "$SIMPLE_SELECTOR" ]; then
+                  LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
+                  if [ -z "$LINE" ]; then LINE=1; fi
+                else
+                  LINE=1
+                fi
+                echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+              done < "$ERRORS_FILE"
+              ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
+              rm "$ERRORS_FILE"
             done
           else
             echo "No hay archivos HTML válidos para escanear."
