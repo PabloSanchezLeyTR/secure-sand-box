@@ -175,7 +175,7 @@ jobs:
                 MESSAGE=$(echo "$issue" | jq -r '.message')
                 SELECTOR=$(echo "$issue" | jq -r '.selector')
                 REPO_PATH="pablo-sand-box/$html_file"
-                echo "::error file=$REPO_PATH::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+                echo "::error file=$REPO_PATH,line=1::[Pa11y] $MESSAGE (selector: $SELECTOR)"
                 ERRORS=$((ERRORS+1))
               done
             done
