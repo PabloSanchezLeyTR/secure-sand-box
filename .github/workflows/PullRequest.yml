@@ -13,7 +13,7 @@ jobs:
       - name: Check for !important in CSS files
         run: |
           if grep -rnw 'pablo-sand-box/src' -e '!important'; then
-            echo "::error ::Se encontró '!important' en los archivos CSS. No se permite el uso de !important en estilos."
+            echo "::error ::'!important' was found in CSS files. The use of !important is not allowed in styles."
             exit 1
           else
             echo "No se encontró '!important' en los archivos CSS."
@@ -211,6 +211,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check for !important in CSS files and annotate
+        run: |
+          found=0
+          grep -rnw 'pablo-sand-box/src' -e '!important' | while IFS=: read -r file line _; do
+            rel_file="${file#pablo-sand-box/}"
+            echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
+            found=1
+          done
+          if [ "$found" = "1" ]; then
+            exit 1
+          fi
 
       - name: Detect changed UX-related files
         id: changed
