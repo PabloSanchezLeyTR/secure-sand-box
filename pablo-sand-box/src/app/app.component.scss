@@ -1,0 +1,37 @@
+/* 1. Accesibilidad: color de texto con bajo contraste */
+.low-contrast-text {
+	color: #cccccc;
+	background: #ffffff;
+}
+
+/* 2. Accesibilidad: quitar outline de los elementos enfocados */
+a, button, input:focus {
+	outline: none;
+}
+
+/* 3. Sobrescribir estilos HTML: hacer todos los botones invisibles */
+button {
+	display: none;
+}
+
+/* 4. Sobrescribir estilos HTML: quitar subrayado a todos los links */
+a {
+	text-decoration: none !important;
+}
+
+/* 5. Usar !important en exceso */
+body {
+	font-size: 10px !important;
+	color: red !important;
+}
+
+/* 6. Usar unidades absolutas para todo */
+h1, h2, h3 {
+	font-size: 50px;
+	margin: 0px;
+}
+
+/* 7. Usar selectores universales peligrosos */
+* {
+	user-select: none;
+}
