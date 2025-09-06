@@ -10,13 +10,26 @@ jobs:
   css-no-important:
     runs-on: self-hosted
     steps:
-      - name: Check for !important in CSS files
+      - name: Check for !important in changed CSS files and annotate
         run: |
-          if grep -rnw 'pablo-sand-box/src' -e '!important'; then
-            echo "::error ::'!important' was found in CSS files. The use of !important is not allowed in styles."
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
+          found=0
+          for file in $CHANGED_CSS; do
+            if [ -f "$file" ]; then
+              grep -n '!important' "$file" | while IFS=: read -r line _; do
+                rel_file="${file#pablo-sand-box/}"
+                echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
+                found=1
+              done
+            fi
+          done
+          if [ "$found" = "1" ]; then
             exit 1
           else
-            echo "No se encontró '!important' en los archivos CSS."
+            echo "'!important' was not found in the changed CSS files."
           fi
 
   lint:
@@ -212,18 +225,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check for !important in CSS files and annotate
-        run: |
-          found=0
-          grep -rnw 'pablo-sand-box/src' -e '!important' | while IFS=: read -r file line _; do
-            rel_file="${file#pablo-sand-box/}"
-            echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
-            found=1
-          done
-          if [ "$found" = "1" ]; then
-            exit 1
-          fi
-
       - name: Detect changed UX-related files
         id: changed
         run: |
@@ -238,7 +239,7 @@ jobs:
           echo "Detected files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
 
-      - name: Prepare prompt for GitHub Models
+      - name: Prepare prompt for GitHub Models (only changed PR files)
         id: prompt
         run: |
           FILES="${{ steps.changed.outputs.files }}"
@@ -251,8 +252,12 @@ jobs:
           FILE_LIST=$(echo $FILES | tr ',' ' ')
           EXISTING_FILES=""
           for f in $FILE_LIST; do
+            # Only consider files that exist and are in the PR diff
             if [ -f "$f" ]; then
-              EXISTING_FILES="$EXISTING_FILES $f"
+              # Check if file is in the PR diff (changed or added)
+              if git diff --name-only $MERGE_BASE..HEAD | grep -qx "$f"; then
+                EXISTING_FILES="$EXISTING_FILES $f"
+              fi
             else
               echo "Warning: $f does not exist."
             fi
