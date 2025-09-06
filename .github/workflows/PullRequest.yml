@@ -7,6 +7,18 @@ on:
 
 jobs:
 
+  css-no-important:
+    runs-on: self-hosted
+    steps:
+      - name: Check for !important in CSS files
+        run: |
+          if grep -rnw 'pablo-sand-box/src' -e '!important'; then
+            echo "::error ::Se encontró '!important' en los archivos CSS. No se permite el uso de !important en estilos."
+            exit 1
+          else
+            echo "No se encontró '!important' en los archivos CSS."
+          fi
+
   lint:
     runs-on: self-hosted
     steps:
