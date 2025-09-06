@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-
   css-no-important:
     runs-on: self-hosted
     steps:
@@ -16,22 +15,23 @@ jobs:
           git fetch origin $BASE_REF
           MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
           CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
-          found=0
+          ERRORS_FILE=$(mktemp)
           for file in $CHANGED_CSS; do
             if [ -f "$file" ]; then
-              # Always use the repo-relative path for annotation
               rel_file="$file"
               grep -n '!important' "$file" | while IFS=: read -r line _; do
                 echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
-                found=1
+                echo 1 >> "$ERRORS_FILE"
               done
             fi
           done
-          if [ "$found" = "1" ]; then
+          if [ -s "$ERRORS_FILE" ]; then
             echo "Failing because !important was found."
+            rm "$ERRORS_FILE"
             exit 1
           else
             echo "'!important' was not found in the changed CSS files."
+            rm "$ERRORS_FILE"
           fi
 
   lint:
@@ -241,7 +241,7 @@ jobs:
           echo "Detected files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
 
-      - name: Prepare prompt for GitHub Models (only changed PR files)
+      - name: Prepare prompt for GitHub Models
         id: prompt
         run: |
           FILES="${{ steps.changed.outputs.files }}"
@@ -254,12 +254,8 @@ jobs:
           FILE_LIST=$(echo $FILES | tr ',' ' ')
           EXISTING_FILES=""
           for f in $FILE_LIST; do
-            # Only consider files that exist and are in the PR diff
             if [ -f "$f" ]; then
-              # Check if file is in the PR diff (changed or added)
-              if git diff --name-only $MERGE_BASE..HEAD | grep -qx "$f"; then
-                EXISTING_FILES="$EXISTING_FILES $f"
-              fi
+              EXISTING_FILES="$EXISTING_FILES $f"
             else
               echo "Warning: $f does not exist."
             fi
