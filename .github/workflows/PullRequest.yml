@@ -252,7 +252,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PAYLOAD=$(printf '%s' "${{ steps.prompt.outputs.prompt }}" | jq -Rs '{model: "openai/gpt-4o", messages: [{role: "user", content: .}]}')
+          echo "${{ steps.prompt.outputs.prompt }}" > prompt.txt
+          PAYLOAD=$(jq -Rs '{model: "openai/gpt-4o", messages: [{role: "user", content: .}]}' < prompt.txt)
           RESPONSE=$(curl -s https://models.github.ai/inference/chat/completions \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
