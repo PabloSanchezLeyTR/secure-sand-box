@@ -7,9 +7,4 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'pablo-sand-box';
-
-  // Cambio artificial para pruebas de PR
-  getVersion(): string {
-    return '1.0.0';
-  }
 }
