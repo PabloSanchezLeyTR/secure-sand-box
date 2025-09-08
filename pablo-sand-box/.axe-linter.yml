@@ -7,3 +7,6 @@ files:
 rules:
   include:
     - all
+
+tags:
+  - wcag2a
