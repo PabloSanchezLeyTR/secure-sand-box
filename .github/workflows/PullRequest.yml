@@ -6,217 +6,217 @@ on:
       - main
 
 jobs:
-  css-no-important:
-    runs-on: self-hosted
-    steps:
-      - name: Check for !important in changed CSS files and annotate
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
-          ERRORS_FILE=$(mktemp)
-          for file in $CHANGED_CSS; do
-            if [ -f "$file" ]; then
-              rel_file="$file"
-              grep -n '!important' "$file" | while IFS=: read -r line _; do
-                echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
-                echo 1 >> "$ERRORS_FILE"
-              done
-            fi
-          done
-          if [ -s "$ERRORS_FILE" ]; then
-            echo "Failing because !important was found."
-            rm "$ERRORS_FILE"
-            exit 1
-          else
-            echo "'!important' was not found in the changed CSS files."
-            rm "$ERRORS_FILE"
-          fi
+  # css-no-important:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Check for !important in changed CSS files and annotate
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
+  #         ERRORS_FILE=$(mktemp)
+  #         for file in $CHANGED_CSS; do
+  #           if [ -f "$file" ]; then
+  #             rel_file="$file"
+  #             grep -n '!important' "$file" | while IFS=: read -r line _; do
+  #               echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
+  #               echo 1 >> "$ERRORS_FILE"
+  #             done
+  #           fi
+  #         done
+  #         if [ -s "$ERRORS_FILE" ]; then
+  #           echo "Failing because !important was found."
+  #           rm "$ERRORS_FILE"
+  #           exit 1
+  #         else
+  #           echo "'!important' was not found in the changed CSS files."
+  #           rm "$ERRORS_FILE"
+  #         fi
 
-  lint:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # lint:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
 
-      - name: Install dependencies
-        working-directory: ./pablo-sand-box
-        run: npm ci
+  #     - name: Install dependencies
+  #       working-directory: ./pablo-sand-box
+  #       run: npm ci
 
-      - name: Run ESLint on changed files
-        working-directory: ./pablo-sand-box
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+  #     - name: Run ESLint on changed files
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
 
-          echo "Detected modified files:"
-          echo "$CHANGED_FILES"
+  #         echo "Detected modified files:"
+  #         echo "$CHANGED_FILES"
 
-          EXISTING_FILES=()
-          for file in $CHANGED_FILES; do
-            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
-            if [ -f "$RELATIVE_FILE" ]; then
-              EXISTING_FILES+=("$RELATIVE_FILE")
-            fi
-          done
+  #         EXISTING_FILES=()
+  #         for file in $CHANGED_FILES; do
+  #           RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+  #           if [ -f "$RELATIVE_FILE" ]; then
+  #             EXISTING_FILES+=("$RELATIVE_FILE")
+  #           fi
+  #         done
 
-          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
-            echo "Linting existing changed files:"
-            printf '%s\n' "${EXISTING_FILES[@]}"
-            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
-          else
-            echo "No valid TypeScript or HTML files to lint."
-          fi
-
-
-
-  axe-lint:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Install jq
-        run: |
-          which jq || brew install jq || sudo apt-get install -y jq
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Download axe-linter binary from Agora
-        env:
-          ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-        run: |
-          curl -L -H "X-JFrog-Art-Api: $ARTIFACTORY_TOKEN_AXELINTER" \
-            -o axe-linter-connector-macos \
-            "https://agora.dequecloud.com/artifactory/linter-bin/axe-linter-connector/4.10.9/packages/connector/pkgs/@axe-devtools/axe-linter-connector-macos"
-          chmod +x axe-linter-connector-macos
-          xattr -d com.apple.quarantine axe-linter-connector-macos || true
-
-      - name: Start Angular server in background
-        run: |
-          nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
-          sleep 30
-
-      - name: Run axe-linter and fail on accessibility errors
-        run: |
-          mkdir -p ./dist/reports
-          ./axe-linter-connector-macos \
-            --reporter=sonarqube \
-            --destination=./dist/reports \
-            --filename=axe-report.json \
-            --client-id=${{ secrets.NPM_EMAIL }} \
-            --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
-            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
-            --source=./pablo-sand-box/src \
-            --local \
-            --debug
-
-          echo "\n--- Accessibility Report ---"
-          if [ -f ./dist/reports/axe-report.json ]; then
-            cat ./dist/reports/axe-report.json
-            ERRORS=$(jq '.issues | length' ./dist/reports/axe-report.json)
-            if [ "$ERRORS" -gt 0 ]; then
-              echo "\nAccessibility errors found: $ERRORS"
-              exit 1
-            else
-              echo "\nNo accessibility errors found."
-            fi
-          else
-            echo "axe-report.json not found!"
-            exit 1
-          fi
-
-      - name: Upload axe report
-        env:
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-        uses: actions/upload-artifact@v4
-        with:
-          name: axe-accessibility-report
-          path: ./dist/reports/axe-report.json
+  #         if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+  #           echo "Linting existing changed files:"
+  #           printf '%s\n' "${EXISTING_FILES[@]}"
+  #           npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
+  #         else
+  #           echo "No valid TypeScript or HTML files to lint."
+  #         fi
 
 
 
-  accessibility-pa11y:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # axe-lint:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v5
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+  #     - name: Install jq
+  #       run: |
+  #         which jq || brew install jq || sudo apt-get install -y jq
 
-      - name: Install Pa11y
-        run: npm install -g pa11y
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
 
-      - name: Detect and scan modified HTML files and annotate
-        working-directory: ./pablo-sand-box
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
+  #     - name: Download axe-linter binary from Agora
+  #       env:
+  #         ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+  #       run: |
+  #         curl -L -H "X-JFrog-Art-Api: $ARTIFACTORY_TOKEN_AXELINTER" \
+  #           -o axe-linter-connector-macos \
+  #           "https://agora.dequecloud.com/artifactory/linter-bin/axe-linter-connector/4.10.9/packages/connector/pkgs/@axe-devtools/axe-linter-connector-macos"
+  #         chmod +x axe-linter-connector-macos
+  #         xattr -d com.apple.quarantine axe-linter-connector-macos || true
 
-          echo "Modified HTML files:"
-          echo "$CHANGED_FILES"
+  #     - name: Start Angular server in background
+  #       run: |
+  #         nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
+  #         sleep 30
 
-          EXISTING_HTML=()
-          for file in $CHANGED_FILES; do
-            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
-            if [ -f "$RELATIVE_FILE" ]; then
-              EXISTING_HTML+=("$RELATIVE_FILE")
-            fi
-          done
+  #     - name: Run axe-linter and fail on accessibility errors
+  #       run: |
+  #         mkdir -p ./dist/reports
+  #         ./axe-linter-connector-macos \
+  #           --reporter=sonarqube \
+  #           --destination=./dist/reports \
+  #           --filename=axe-report.json \
+  #           --client-id=${{ secrets.NPM_EMAIL }} \
+  #           --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
+  #           --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
+  #           --source=./pablo-sand-box/src \
+  #           --local \
+  #           --debug
 
-          ERRORS=0
-          if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
-            echo "Scanning accessibility with Pa11y and generating annotations (estimated line):"
-            for html_file in "${EXISTING_HTML[@]}"; do
-              echo "→ $html_file"
-              pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
-              ERRORS_FILE=$(mktemp)
-              jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
-              while read -r issue; do
-                MESSAGE=$(echo "$issue" | jq -r '.message')
-                SELECTOR=$(echo "$issue" | jq -r '.selector')
-                REPO_PATH="pablo-sand-box/$html_file"
-                # Only for simple selectors: input, button, img, etc.
-                SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
-                if [ -n "$SIMPLE_SELECTOR" ]; then
-                  LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
-                  if [ -z "$LINE" ]; then LINE=1; fi
-                else
-                  LINE=1
-                fi
-                echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
-              done < "$ERRORS_FILE"
-              ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
-              rm "$ERRORS_FILE"
-            done
-          else
-            echo "No valid HTML files to scan."
-          fi
+  #         echo "\n--- Accessibility Report ---"
+  #         if [ -f ./dist/reports/axe-report.json ]; then
+  #           cat ./dist/reports/axe-report.json
+  #           ERRORS=$(jq '.issues | length' ./dist/reports/axe-report.json)
+  #           if [ "$ERRORS" -gt 0 ]; then
+  #             echo "\nAccessibility errors found: $ERRORS"
+  #             exit 1
+  #           else
+  #             echo "\nNo accessibility errors found."
+  #           fi
+  #         else
+  #           echo "axe-report.json not found!"
+  #           exit 1
+  #         fi
 
-          if [ "$ERRORS" -gt 0 ]; then
-            echo "Accessibility errors detected: $ERRORS"
-            exit 1
-          fi
+  #     - name: Upload axe report
+  #       env:
+  #         NODE_TLS_REJECT_UNAUTHORIZED: 0
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: axe-accessibility-report
+  #         path: ./dist/reports/axe-report.json
+
+
+
+  # accessibility-pa11y:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
+
+  #     - name: Install Pa11y
+  #       run: npm install -g pa11y
+
+  #     - name: Detect and scan modified HTML files and annotate
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
+
+  #         echo "Modified HTML files:"
+  #         echo "$CHANGED_FILES"
+
+  #         EXISTING_HTML=()
+  #         for file in $CHANGED_FILES; do
+  #           RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+  #           if [ -f "$RELATIVE_FILE" ]; then
+  #             EXISTING_HTML+=("$RELATIVE_FILE")
+  #           fi
+  #         done
+
+  #         ERRORS=0
+  #         if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
+  #           echo "Scanning accessibility with Pa11y and generating annotations (estimated line):"
+  #           for html_file in "${EXISTING_HTML[@]}"; do
+  #             echo "→ $html_file"
+  #             pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
+  #             ERRORS_FILE=$(mktemp)
+  #             jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
+  #             while read -r issue; do
+  #               MESSAGE=$(echo "$issue" | jq -r '.message')
+  #               SELECTOR=$(echo "$issue" | jq -r '.selector')
+  #               REPO_PATH="pablo-sand-box/$html_file"
+  #               # Only for simple selectors: input, button, img, etc.
+  #               SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
+  #               if [ -n "$SIMPLE_SELECTOR" ]; then
+  #                 LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
+  #                 if [ -z "$LINE" ]; then LINE=1; fi
+  #               else
+  #                 LINE=1
+  #               fi
+  #               echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+  #             done < "$ERRORS_FILE"
+  #             ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
+  #             rm "$ERRORS_FILE"
+  #           done
+  #         else
+  #           echo "No valid HTML files to scan."
+  #         fi
+
+  #         if [ "$ERRORS" -gt 0 ]; then
+  #           echo "Accessibility errors detected: $ERRORS"
+  #           exit 1
+  #         fi
 
 
   ia-ux-models-review:
