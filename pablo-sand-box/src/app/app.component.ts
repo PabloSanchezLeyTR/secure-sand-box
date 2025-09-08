@@ -1,3 +1,4 @@
+var name = Joe;
 import { Component } from '@angular/core';
 
 @Component({
