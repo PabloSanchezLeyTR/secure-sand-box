@@ -281,6 +281,7 @@ jobs:
           fi
           # Get only the diff (changed lines) for each HTML file
           DIFF_CONTENT=""
+          COMPONENTS_USED=""
           BASE_REF="${{ github.event.pull_request.base.ref }}"
           git fetch origin $BASE_REF || { echo "git fetch failed"; exit 1; }
           MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD) || { echo "git merge-base failed"; exit 1; }
@@ -288,10 +289,27 @@ jobs:
             DIFF=$(git diff $MERGE_BASE..HEAD -- $f)
             if [ -n "$DIFF" ]; then
               DIFF_CONTENT="$DIFF_CONTENT\n\n--- Diff for $f ---\n$DIFF"
+              # Detect used components in the diff (simple regex for <tag)
+              TAGS=$(echo "$DIFF" | grep -oE '<[a-zA-Z0-9\-]+' | sed 's/[< ]//g' | sort | uniq)
+              for tag in $TAGS; do
+                COMPONENTS_USED="$COMPONENTS_USED $tag"
+              done
             fi
           done
           if [ -z "$DIFF_CONTENT" ]; then
             DIFF_CONTENT="No HTML diffs detected in this PR."
+          fi
+          # Extract only relevant sections from COMPONENTS_INFO
+          RELEVANT_COMPONENTS=""
+          for tag in $(echo $COMPONENTS_USED | tr ' ' '\n' | sort | uniq); do
+            # Use awk to extract the block for the tag (YAML block)
+            BLOCK=$(echo "$COMPONENTS_INFO" | awk -v t="$tag:" '$0 ~ "^ *"t {printit=1} printit && NF==0 {printit=0} printit {print $0}' | sed '/^$/d')
+            if [ -n "$BLOCK" ]; then
+              RELEVANT_COMPONENTS="$RELEVANT_COMPONENTS\n$BLOCK"
+            fi
+          done
+          if [ -z "$RELEVANT_COMPONENTS" ]; then
+            RELEVANT_COMPONENTS="No relevant global components detected in the diffs."
           fi
           {
             echo "You are an expert in UX and accessibility. Review the following HTML code diffs and suggest improvements in:"
@@ -299,8 +317,8 @@ jobs:
             echo "- Visual consistency and design best practices"
             echo "- Clean and maintainable code (especially in React or Angular)"
             echo
-            echo "These are the global components used in the project and their expected accessibility attributes:"
-            echo "$COMPONENTS_INFO"
+            echo "These are the global components used in the project and their expected accessibility attributes (only those found in the diffs):"
+            echo "$RELEVANT_COMPONENTS"
             echo
             echo "Diffs:"
             echo "$DIFF_CONTENT"
