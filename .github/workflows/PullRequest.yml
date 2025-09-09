@@ -264,8 +264,8 @@ jobs:
             echo "prompt_b64=$(echo -n 'No UX-related files changed in this PR.' | base64)" >> $GITHUB_OUTPUT
             exit 0
           fi
-          # Only keep HTML files
-          FILE_LIST=$(echo $FILES | tr ',' '\n' | grep -E '\.html$' | tr '\n' ' ')
+          # Incluir archivos HTML, CSS, SCSS, TS, JSX, TSX
+          FILE_LIST=$(echo $FILES | tr ',' '\n' | grep -E '\.(html|css|scss|ts|tsx|jsx)$' | tr '\n' ' ')
           EXISTING_FILES=""
           for f in $FILE_LIST; do
             if [ -f "$f" ]; then
@@ -275,11 +275,11 @@ jobs:
             fi
           done
           if [ -z "$EXISTING_FILES" ]; then
-            echo "No existing HTML files to analyze."
-            echo "prompt_b64=$(echo -n 'No existing HTML files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
+            echo "No existing relevant files to analyze."
+            echo "prompt_b64=$(echo -n 'No existing relevant files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
             exit 0
           fi
-          # Get only the diff (changed lines) for each HTML file, and truncate if too large
+          # Obtener los diffs de cada archivo relevante
           DIFF_CONTENT=""
           COMPONENTS_USED=""
           BASE_REF="${{ github.event.pull_request.base.ref }}"
@@ -289,30 +289,30 @@ jobs:
             DIFF=$(git diff $MERGE_BASE..HEAD -- $f)
             if [ -n "$DIFF" ]; then
               DIFF_CONTENT="$DIFF_CONTENT\n\n--- Diff for $f ---\n$DIFF"
-              # Detect used components in the diff (simple regex for <tag)
-              TAGS=$(echo "$DIFF" | grep -oE '<[a-zA-Z0-9\-]+' | sed 's/[< ]//g' | sort | uniq)
-              for tag in $TAGS; do
-                COMPONENTS_USED="$COMPONENTS_USED $tag"
-              done
+              # Detectar componentes solo en HTML/JSX/TSX
+              if echo "$f" | grep -E '\.(html|jsx|tsx)$' > /dev/null; then
+                TAGS=$(echo "$DIFF" | grep -oE '<[a-zA-Z0-9\-]+' | sed 's/[< ]//g' | sort | uniq)
+                for tag in $TAGS; do
+                  COMPONENTS_USED="$COMPONENTS_USED $tag"
+                done
+              fi
             fi
           done
-          # Truncate diff content to first 400 lines if too large
+          # Truncar el diff a las primeras 400 líneas si es necesario
           DIFF_CONTENT_TRUNC=$(echo "$DIFF_CONTENT" | head -n 400)
           if [ -z "$DIFF_CONTENT_TRUNC" ]; then
-            DIFF_CONTENT_TRUNC="No HTML diffs detected in this PR."
+            DIFF_CONTENT_TRUNC="No relevant diffs detected in this PR."
           elif [ $(echo "$DIFF_CONTENT" | wc -l) -gt 400 ]; then
             DIFF_CONTENT_TRUNC="$DIFF_CONTENT_TRUNC\n... Diff truncated to first 400 lines ..."
           fi
-          # Extract only relevant sections from COMPONENTS_INFO, truncate if too large
+          # Extraer solo los componentes relevantes de COMPONENTS_INFO, truncar si es necesario
           RELEVANT_COMPONENTS=""
           for tag in $(echo $COMPONENTS_USED | tr ' ' '\n' | sort | uniq); do
-            # Use awk to extract the block for the tag (YAML block)
             BLOCK=$(echo "$COMPONENTS_INFO" | awk -v t="$tag:" '$0 ~ "^ *"t {printit=1} printit && NF==0 {printit=0} printit {print $0}' | sed '/^$/d')
             if [ -n "$BLOCK" ]; then
               RELEVANT_COMPONENTS="$RELEVANT_COMPONENTS\n$BLOCK"
             fi
           done
-          # Truncate relevant components to first 100 lines if too large
           RELEVANT_COMPONENTS_TRUNC=$(echo "$RELEVANT_COMPONENTS" | head -n 100)
           if [ -z "$RELEVANT_COMPONENTS_TRUNC" ]; then
             RELEVANT_COMPONENTS_TRUNC="No relevant global components detected in the diffs."
@@ -320,7 +320,7 @@ jobs:
             RELEVANT_COMPONENTS_TRUNC="$RELEVANT_COMPONENTS_TRUNC\n... Components truncated to first 100 lines ..."
           fi
           {
-            echo "You are an expert in UX and accessibility. Review the following HTML code diffs and suggest improvements in:"
+            echo "You are an expert in UX and accessibility. Review the following code diffs and suggest improvements in:"
             echo "- Accessibility (use of roles, aria, focus, navigation)"
             echo "- Visual consistency and design best practices"
             echo "- Clean and maintainable code (especially in React or Angular)"
