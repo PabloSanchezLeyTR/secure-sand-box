@@ -241,10 +241,23 @@ jobs:
           echo "Detected files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
 
+      - name: Load global components definitions
+        id: components
+        run: |
+          COMPONENTS_FILE=".github/global-components.yml"
+          if [ ! -f "$COMPONENTS_FILE" ]; then
+            echo "No global components file found."
+            echo "components_info=$(echo -n 'No global components defined.' | base64)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          COMPONENTS_CONTENT=$(cat "$COMPONENTS_FILE")
+          echo "components_info=$(echo -n "$COMPONENTS_CONTENT" | base64)" >> $GITHUB_OUTPUT
+
       - name: Prepare prompt for GitHub Models
         id: prompt
         run: |
           FILES="${{ steps.changed.outputs.files }}"
+          COMPONENTS_INFO=$(echo "${{ steps.components.outputs.components_info }}" | base64 -d)
           echo "Analyzing files: $FILES"
           if [ -z "$FILES" ]; then
             echo "No UX-related files changed."
@@ -271,8 +284,11 @@ jobs:
             echo "- Accessibility (use of roles, aria, focus, navigation)"
             echo "- Visual consistency and design best practices"
             echo "- Clean and maintainable code (especially in React or Angular)"
-            echo "Code:"
             echo
+            echo "These are the global components used in the project and their expected accessibility attributes:"
+            echo "$COMPONENTS_INFO"
+            echo
+            echo "Code:"
             echo "$CONTENT"
           } > prompt.txt
           PROMPT_B64=$(base64 < prompt.txt)
