@@ -1,0 +1,1874 @@
+global-components:
+    SafActionCard:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-action-card:
+        element: div
+        required-attributes:
+            - aria-label
+    SafActionCardAction:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - ariaExpanded
+            - ariaPressed
+            - aria-pressed
+            - a11yAriaLabel
+            - a11yRole
+            - a11yAriaValueNow
+            - a11yAriaValueMin
+            - a11yAriaValueMax
+            - a11yAriaOrientation
+            - a11yAriaRoleDescription
+            - ariaSelected
+            - aria-selected
+            - a11yAriaCurrent
+    saf-action-card-action:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - aria-expanded
+            - aria-pressed
+            - a11y-aria-label
+            - a11y-role
+            - a11y-aria-valuenow
+            - a11y-aria-valuemin
+            - a11y-aria-valuemax
+            - a11y-aria-orientation
+            - a11y-aria-roledescription
+            - aria-selected
+            - a11y-aria-current
+    SafActivity:
+        element: div
+        required-attributes:
+            - headerId
+            - timeId
+    saf-activity:
+        element: div
+        required-attributes:
+            - header-id
+            - time-id
+    SafAlert:
+        element: div
+        required-attributes:
+            - iconAriaLabel
+            - closeAriaLabel
+            - announce
+    saf-alert:
+        element: div
+        required-attributes:
+            - icon-aria-label
+            - close-aria-label
+            - announce
+    SafAnchor:
+        element: a
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaExpanded
+            - aria-expanded
+            - a11yAriaDescription
+            - a11yAriaCurrent
+    saf-anchor:
+        element: a
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-expanded
+            - a11y-aria-description
+            - a11y-aria-current
+    SafAnchorBase:
+        element: a
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaExpanded
+            - aria-expanded
+            - a11yAriaDescription
+            - a11yAriaCurrent
+    saf-anchor-base:
+        element: a
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-expanded
+            - a11y-aria-description
+            - a11y-aria-current
+    SafAvatar:
+        element: div
+        required-attributes:
+            - label
+            - presentation
+    saf-avatar:
+        element: div
+        required-attributes:
+            - label
+            - presentation
+    SafBackToTop:
+        element: div
+        required-attributes:
+            - a11yAriaDescription
+    saf-back-to-top:
+        element: div
+        required-attributes:
+            - a11y-aria-description
+    SafBreadcrumbItem:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaExpanded
+            - aria-expanded
+            - a11yAriaDescription
+            - a11yAriaCurrent
+    saf-breadcrumb-item:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-expanded
+            - a11y-aria-description
+            - a11y-aria-current
+    SafButton:
+        element: button
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - ariaExpanded
+            - ariaPressed
+            - aria-pressed
+            - a11yAriaLabel
+            - a11yRole
+            - a11yAriaValueNow
+            - a11yAriaValueMin
+            - a11yAriaValueMax
+            - a11yAriaOrientation
+            - a11yAriaRoleDescription
+            - ariaSelected
+            - aria-selected
+    saf-button:
+        element: button
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - a11y-aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - a11y-aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - a11y-aria-expanded
+            - aria-pressed
+            - a11y-aria-label
+            - a11y-role
+            - a11y-aria-valuenow
+            - a11y-aria-valuemin
+            - a11y-aria-valuemax
+            - a11y-aria-orientation
+            - a11y-aria-roledescription
+            - aria-selected
+    SafButtonBase:
+        element: button
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - ariaExpanded
+            - ariaPressed
+            - aria-pressed
+            - a11yAriaLabel
+            - a11yRole
+            - a11yAriaValueNow
+            - a11yAriaValueMin
+            - a11yAriaValueMax
+            - a11yAriaOrientation
+            - a11yAriaRoleDescription
+            - ariaSelected
+            - aria-selected
+    saf-button-base:
+        element: button
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - a11y-aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - a11y-aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - a11y-aria-expanded
+            - aria-pressed
+            - a11y-aria-label
+            - a11y-role
+            - a11y-aria-valuenow
+            - a11y-aria-valuemin
+            - a11y-aria-valuemax
+            - a11y-aria-orientation
+            - a11y-aria-roledescription
+            - aria-selected
+    SafButtonGroup:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-button-group:
+        element: div
+        required-attributes:
+            - aria-label
+    SafCalendar:
+        element: div
+        required-attributes:
+            - monthSelectAriaLabel
+            - datePickerAriaLabel
+            - prevMonthAriaLabel
+            - nextMonthAriaLabel
+            - yearSelectAriaLabel
+    saf-calendar:
+        element: div
+        required-attributes:
+            - month-select-aria-label
+            - date-picker-aria-label
+            - prev-month-aria-label
+            - next-month-aria-label
+            - year-select-aria-label
+    SafCard:
+        element: div
+        required-attributes:
+            - headingLevel
+    saf-card:
+        element: div
+        required-attributes:
+            - heading-level
+    SafChat:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+            - messageAriaLabel
+    saf-chat:
+        element: div
+        required-attributes:
+            - aria-label
+            - message-aria-label
+    SafCheckbox:
+        element: input
+        required-attributes:
+            - type: checkbox
+            - a11yAriaDescription
+            - errorAriaLabel
+            - a11yAriaLabel
+    saf-checkbox:
+        element: input
+        required-attributes:
+            - type: checkbox
+            - a11y-aria-description
+            - error-aria-label
+            - a11y-aria-label
+    SafCheckboxGroup:
+        element: div
+        required-attributes:
+            - optionalText
+            - errorAriaLabel
+            - requiredAriaText
+    saf-checkbox-group:
+        element: div
+        required-attributes:
+            - optional-text
+            - error-aria-label
+            - required-aria-text
+    SafChip:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - ariaExpanded
+            - ariaPressed
+            - aria-pressed
+            - a11yAriaLabel
+            - a11yRole
+            - a11yAriaValueNow
+            - a11yAriaValueMin
+            - a11yAriaValueMax
+            - a11yAriaOrientation
+            - a11yAriaRoleDescription
+            - ariaSelected
+            - aria-selected
+    saf-chip:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - a11y-aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - a11y-aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - a11y-aria-expanded
+            - aria-pressed
+            - a11y-aria-label
+            - a11y-role
+            - a11y-aria-valuenow
+            - a11y-aria-valuemin
+            - a11y-aria-valuemax
+            - a11y-aria-orientation
+            - a11y-aria-roledescription
+            - aria-selected
+    SafCombobox:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaActiveDescendant
+            - ariaExpanded
+            - ariaMultiSelectable
+            - ariaAutoComplete
+            - a11yKeyboardHelp
+            - progressRingAriaLabel
+            - inputAriaLabel
+            - successAriaLabel
+            - errorAriaLabel
+            - a11yAriaDescription
+            - ariaDescribedbyIds
+    saf-combobox:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-keyboard-help
+            - progress-ring-aria-label
+            - input-aria-label
+            - success-aria-label
+            - error-aria-label
+            - a11y-aria-description
+    SafCommentField:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-comment-field:
+        element: div
+        required-attributes:
+            - aria-label
+    SafDateMaskedInput:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - successAriaLabel
+            - errorAriaLabel
+    saf-date-masked-input:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - success-aria-label
+            - error-aria-label
+    SafDatePicker:
+        element: input
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-date-picker:
+        element: input
+        required-attributes:
+            - aria-*
+    SafDialog:
+        element: div
+        required-attributes:
+            - a11yAriaLabel
+            - closeAriaLabel
+            - ariaTitleLevel
+            - aria-title-level
+            - ariaSubtitleLevel
+            - aria-subtitle-level
+    saf-dialog:
+        element: div
+        required-attributes:
+            - a11y-aria-label
+            - close-aria-label
+            - aria-title-level
+            - aria-subtitle-level
+    SafDivider:
+        element: div
+        required-attributes:
+            - role
+    saf-divider:
+        element: div
+        required-attributes:
+            - role
+    SafDrawer:
+        element: div
+        required-attributes:
+            - closeAriaLabel
+            - ariaTitleLevel
+            - aria-title-level
+            - ariaSubtitleLevel
+            - aria-subtitle-level
+            - a11yAriaLabel
+    saf-drawer:
+        element: div
+        required-attributes:
+            - close-aria-label
+            - aria-title-level
+            - aria-subtitle-level
+            - a11y-aria-label
+    SafEmptyState:
+        element: div
+        required-attributes:
+            - emptyStateTitle
+            - ariaTitleLevel
+            - aria-title-level
+    saf-empty-state:
+        element: div
+        required-attributes:
+            - empty-state-title
+            - aria-title-level
+    SafFacetItem:
+        element: div
+        required-attributes:
+            - expandAriaLabel
+            - collapseAriaLabel
+    saf-facet-item:
+        element: div
+        required-attributes:
+            - expand-aria-label
+            - collapse-aria-label
+    SafFacetedFilter:
+        element: div
+        required-attributes:
+            - ariaTitleLevel
+            - aria-title-level
+            - ariaSubtitleLevel
+            - aria-subtitle-level
+    saf-faceted-filter:
+        element: div
+        required-attributes:
+            - aria-title-level
+            - aria-subtitle-level
+    SafFlipper:
+        element: div
+        required-attributes:
+            - hiddenFromAT
+            - aria-hidden
+    saf-flipper:
+        element: div
+        required-attributes:
+            - aria-hidden
+    SafFooter:
+        element: div
+        required-attributes:
+            - a11yAriaLabelAnchorGroup
+            - a11yAriaLabelSocialIcons
+    saf-footer:
+        element: div
+        required-attributes:
+            - a11y-aria-label-anchor-group
+            - a11y-aria-label-social-icons
+    SafFormButton:
+        element: button
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - ariaExpanded
+            - ariaPressed
+            - aria-pressed
+            - a11yAriaLabel
+            - a11yRole
+            - a11yAriaValueNow
+            - a11yAriaValueMin
+            - a11yAriaValueMax
+            - a11yAriaOrientation
+            - a11yAriaRoleDescription
+            - ariaSelected
+            - aria-selected
+    saf-form-button:
+        element: button
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - a11y-aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - a11y-aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - a11y-aria-expanded
+            - aria-pressed
+            - a11y-aria-label
+            - a11y-role
+            - a11y-aria-valuenow
+            - a11y-aria-valuemin
+            - a11y-aria-valuemax
+            - a11y-aria-orientation
+            - a11y-aria-roledescription
+            - aria-selected
+    SafIcon:
+        element: div
+        required-attributes:
+            - ariaLabelledBy
+            - aria-labelledby
+            - ariaLabel
+            - aria-label
+            - presentation
+    saf-icon:
+        element: div
+        required-attributes:
+            - aria-labelledby
+            - aria-label
+            - presentation
+    SafList:
+        element: div
+        required-attributes:
+            - aria-label
+            - ariaLabel
+    saf-list:
+        element: div
+        required-attributes:
+            - aria-*
+    SafListbox:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaActiveDescendant
+            - ariaExpanded
+            - ariaMultiSelectable
+            - ariaLabelledBy
+            - aria-labelledby
+    saf-listbox:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-labelledby
+    SafListboxAbstract:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaActiveDescendant
+            - ariaExpanded
+            - ariaMultiSelectable
+    saf-listbox-abstract:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+    SafListboxOptionValue:
+        element: option
+        required-attributes:
+            - aria-*
+    saf-listbox-option-value:
+        element: option
+        required-attributes:
+            - aria-*
+    SafMenu:
+        element: div
+        required-attributes:
+            - aria-*
+    saf-menu:
+        element: div
+        required-attributes:
+            - aria-*
+    SafMenuItem:
+        element: div
+        required-attributes:
+            - role
+    saf-menu-item:
+        element: div
+        required-attributes:
+            - role
+    SafMessageBox:
+        element: div
+        required-attributes:
+            - avatarPresentation
+    saf-message-box:
+        element: div
+        required-attributes:
+            - avatar-presentation
+    SafNumberField:
+        element: input
+        required-attributes:
+            - type: number
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - successAriaLabel
+            - errorAriaLabel
+            - a11yAriaDescription
+    saf-number-field:
+        element: input
+        required-attributes:
+            - type: number
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - success-aria-label
+            - error-aria-label
+            - a11y-aria-description
+    SafOption:
+        element: option
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaChecked
+            - aria-checked
+            - ariaPosInSet
+            - aria-posinset
+            - ariaSelected
+            - aria-selected
+            - ariaSetSize
+            - aria-setsize
+    saf-option:
+        element: option
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-checked
+            - aria-posinset
+            - aria-selected
+            - aria-setsize
+    SafPagination:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+            - dataAriaLive
+    saf-pagination:
+        element: div
+        required-attributes:
+            - aria-label
+            - data-aria-live
+    SafProductHeader:
+        element: div
+        required-attributes:
+            - globalAriaLabel
+            - tasksAriaLabel
+    saf-product-header:
+        element: div
+        required-attributes:
+            - global-aria-label
+            - tasks-aria-label
+    SafProgress:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+            - label
+            - ariaValueNow
+            - aria-valuenow
+            - ariaValueMin
+            - aria-valuemin
+            - ariaValueMax
+            - aria-valuemax
+            - ariaLabelledBy
+            - aria-labelledby
+            - announce
+    saf-progress:
+        element: div
+        required-attributes:
+            - aria-label
+            - label
+            - aria-valuenow
+            - aria-valuemin
+            - aria-valuemax
+            - aria-labelledby
+            - announce
+    SafProgressRing:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+            - ariaValueNow
+            - aria-valuenow
+            - ariaValueMin
+            - aria-valuemin
+            - ariaValueMax
+            - aria-valuemax
+            - ariaLabelledBy
+            - aria-labelledby
+            - announce
+            - completionMessage
+    saf-progress-ring:
+        element: div
+        required-attributes:
+            - aria-label
+            - aria-valuenow
+            - aria-valuemin
+            - aria-valuemax
+            - aria-labelledby
+            - announce
+            - completion-message
+    SafRadio:
+        element: input
+        required-attributes:
+            - type: radio
+            - a11yAriaDescription
+            - a11yAriaLabel
+            - ariaLabelledbyIds
+    saf-radio:
+        element: input
+        required-attributes:
+            - type: radio
+            - a11y-aria-description
+            - a11y-aria-label
+    SafRadioGroup:
+        element: div
+        required-attributes:
+            - a11yAriaLabel
+            - errorAriaLabel
+    saf-radio-group:
+        element: div
+        required-attributes:
+            - a11y-aria-label
+            - error-aria-label
+    SafSearchField:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+    saf-search-field:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+    SafSelect:
+        element: select
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaActiveDescendant
+            - ariaExpanded
+            - ariaMultiSelectable
+            - ariaLabelledBy
+            - aria-labelledby
+    saf-select:
+        element: select
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-labelledby
+    SafSideNav:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+            - ariaExpanded
+    saf-side-nav:
+        element: div
+        required-attributes:
+            - aria-label
+    SafSkipLink:
+        element: div
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - ariaExpanded
+            - aria-expanded
+            - a11yAriaDescription
+            - a11yAriaCurrent
+    saf-skip-link:
+        element: div
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - aria-expanded
+            - a11y-aria-description
+            - a11y-aria-current
+    SafStatus:
+        element: div
+        required-attributes:
+            - ariaLabelledBy
+            - aria-labelledby
+            - ariaRole
+            - aria-role
+            - pausedAriaLabel
+            - infoAriaLabel
+            - successAriaLabel
+            - errorAriaLabel
+            - warningAriaLabel
+    saf-status:
+        element: div
+        required-attributes:
+            - aria-labelledby
+            - aria-role
+            - paused-aria-label
+            - info-aria-label
+            - success-aria-label
+            - error-aria-label
+            - warning-aria-label
+    SafStep:
+        element: div
+        required-attributes:
+            - statusLabel
+    saf-step:
+        element: div
+        required-attributes:
+            - status-label
+    SafStepper:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-stepper:
+        element: div
+        required-attributes:
+            - aria-label
+    SafTable:
+        element: table
+        required-attributes:
+            - aria-*
+    saf-table:
+        element: table
+        required-attributes:
+            - aria-*
+    SafTabs:
+        element: div
+        required-attributes:
+            - a11yAriaLabel
+    saf-tabs:
+        element: div
+        required-attributes:
+            - a11y-aria-label
+    SafTextArea:
+        element: textarea
+        required-attributes:
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - errorAriaLabel
+    saf-text-area:
+        element: textarea
+        required-attributes:
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - error-aria-label
+    SafTextField:
+        element: input
+        required-attributes:
+            - type: search
+            - ariaAtomic
+            - aria-atomic
+            - ariaBusy
+            - aria-busy
+            - ariaControls
+            - aria-controls
+            - ariaCurrent
+            - aria-current
+            - ariaDescribedby
+            - aria-describedby
+            - ariaDetails
+            - aria-details
+            - ariaDisabled
+            - aria-disabled
+            - ariaErrormessage
+            - aria-errormessage
+            - ariaFlowto
+            - aria-flowto
+            - ariaHaspopup
+            - aria-haspopup
+            - ariaHidden
+            - aria-hidden
+            - ariaInvalid
+            - aria-invalid
+            - ariaKeyshortcuts
+            - aria-keyshortcuts
+            - ariaLabel
+            - aria-label
+            - ariaLabelledby
+            - aria-labelledby
+            - ariaLive
+            - aria-live
+            - ariaOwns
+            - aria-owns
+            - ariaRelevant
+            - aria-relevant
+            - ariaRoledescription
+            - aria-roledescription
+            - a11yAriaDescription
+            - successAriaLabel
+            - errorAriaLabel
+    saf-text-field:
+        element: input
+        required-attributes:
+            - type: search
+            - aria-atomic
+            - aria-busy
+            - aria-controls
+            - aria-current
+            - aria-describedby
+            - aria-details
+            - aria-disabled
+            - aria-errormessage
+            - aria-flowto
+            - aria-haspopup
+            - aria-hidden
+            - aria-invalid
+            - aria-keyshortcuts
+            - aria-label
+            - aria-labelledby
+            - aria-live
+            - aria-owns
+            - aria-relevant
+            - aria-roledescription
+            - a11y-aria-description
+            - success-aria-label
+            - error-aria-label
+    SafToolbar:
+        element: div
+        required-attributes:
+            - ariaLabel
+            - aria-label
+    saf-toolbar:
+        element: div
+        required-attributes:
+            - aria-label
+    SafWindow:
+        element: div
+        required-attributes:
+            - closeAriaLabel
+            - ariaSelectedAttr
+    saf-window:
+        element: div
+        required-attributes:
+            - close-aria-label
+    SafWindows:
+        element: div
+        required-attributes:
+            - a11yAriaLabel
+    saf-windows:
+        element: div
+        required-attributes:
+            - a11y-aria-label
+    SafWizard:
+        element: div
+        required-attributes:
+            - a11yAriaLabel
+    saf-wizard:
+        element: div
+        required-attributes:
+            - a11y-aria-label

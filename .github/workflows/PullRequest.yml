@@ -241,17 +241,31 @@ jobs:
           echo "Detected files: $FILES"
           echo "files=$FILES" >> $GITHUB_OUTPUT
 
+      - name: Load global components definitions
+        id: components
+        run: |
+          COMPONENTS_FILE=".github/global-components.yml"
+          if [ ! -f "$COMPONENTS_FILE" ]; then
+            echo "No global components file found."
+            echo "components_info=$(echo -n 'No global components defined.' | base64)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          COMPONENTS_CONTENT=$(cat "$COMPONENTS_FILE")
+          echo "components_info=$(echo -n "$COMPONENTS_CONTENT" | base64)" >> $GITHUB_OUTPUT
+
       - name: Prepare prompt for GitHub Models
         id: prompt
         run: |
           FILES="${{ steps.changed.outputs.files }}"
+          COMPONENTS_INFO=$(echo "${{ steps.components.outputs.components_info }}" | base64 -d)
           echo "Analyzing files: $FILES"
           if [ -z "$FILES" ]; then
             echo "No UX-related files changed."
             echo "prompt_b64=$(echo -n 'No UX-related files changed in this PR.' | base64)" >> $GITHUB_OUTPUT
             exit 0
           fi
-          FILE_LIST=$(echo $FILES | tr ',' ' ')
+          # Incluir archivos HTML, CSS, SCSS, TS, JSX, TSX
+          FILE_LIST=$(echo $FILES | tr ',' '\n' | grep -E '\.(html|css|scss|ts|tsx|jsx)$' | tr '\n' ' ')
           EXISTING_FILES=""
           for f in $FILE_LIST; do
             if [ -f "$f" ]; then
@@ -261,19 +275,61 @@ jobs:
             fi
           done
           if [ -z "$EXISTING_FILES" ]; then
-            echo "No existing files to analyze."
-            echo "prompt_b64=$(echo -n 'No existing UX-related files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
+            echo "No existing relevant files to analyze."
+            echo "prompt_b64=$(echo -n 'No existing relevant files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
             exit 0
           fi
-          CONTENT=$(cat $EXISTING_FILES)
+          # Obtener los diffs de cada archivo relevante
+          DIFF_CONTENT=""
+          COMPONENTS_USED=""
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF || { echo "git fetch failed"; exit 1; }
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD) || { echo "git merge-base failed"; exit 1; }
+          for f in $EXISTING_FILES; do
+            DIFF=$(git diff $MERGE_BASE..HEAD -- $f)
+            if [ -n "$DIFF" ]; then
+              DIFF_CONTENT="$DIFF_CONTENT\n\n--- Diff for $f ---\n$DIFF"
+              # Detectar componentes solo en HTML/JSX/TSX
+              if echo "$f" | grep -E '\.(html|jsx|tsx)$' > /dev/null; then
+                TAGS=$(echo "$DIFF" | grep -oE '<[a-zA-Z0-9\-]+' | sed 's/[< ]//g' | sort | uniq)
+                for tag in $TAGS; do
+                  COMPONENTS_USED="$COMPONENTS_USED $tag"
+                done
+              fi
+            fi
+          done
+          # Truncar el diff a las primeras 400 líneas si es necesario
+          DIFF_CONTENT_TRUNC=$(echo "$DIFF_CONTENT" | head -n 400)
+          if [ -z "$DIFF_CONTENT_TRUNC" ]; then
+            DIFF_CONTENT_TRUNC="No relevant diffs detected in this PR."
+          elif [ $(echo "$DIFF_CONTENT" | wc -l) -gt 400 ]; then
+            DIFF_CONTENT_TRUNC="$DIFF_CONTENT_TRUNC\n... Diff truncated to first 400 lines ..."
+          fi
+          # Extraer solo los componentes relevantes de COMPONENTS_INFO, truncar si es necesario
+          RELEVANT_COMPONENTS=""
+          for tag in $(echo $COMPONENTS_USED | tr ' ' '\n' | sort | uniq); do
+            BLOCK=$(echo "$COMPONENTS_INFO" | awk -v t="$tag:" '$0 ~ "^ *"t {printit=1} printit && NF==0 {printit=0} printit {print $0}' | sed '/^$/d')
+            if [ -n "$BLOCK" ]; then
+              RELEVANT_COMPONENTS="$RELEVANT_COMPONENTS\n$BLOCK"
+            fi
+          done
+          RELEVANT_COMPONENTS_TRUNC=$(echo "$RELEVANT_COMPONENTS" | head -n 100)
+          if [ -z "$RELEVANT_COMPONENTS_TRUNC" ]; then
+            RELEVANT_COMPONENTS_TRUNC="No relevant global components detected in the diffs."
+          elif [ $(echo "$RELEVANT_COMPONENTS" | wc -l) -gt 100 ]; then
+            RELEVANT_COMPONENTS_TRUNC="$RELEVANT_COMPONENTS_TRUNC\n... Components truncated to first 100 lines ..."
+          fi
           {
-            echo "You are an expert in UX and accessibility. Review the following code (HTML, CSS, JS/TS) and suggest improvements in:"
+            echo "You are an expert in UX and accessibility. Review the following code diffs and suggest improvements in:"
             echo "- Accessibility (use of roles, aria, focus, navigation)"
             echo "- Visual consistency and design best practices"
             echo "- Clean and maintainable code (especially in React or Angular)"
-            echo "Code:"
             echo
-            echo "$CONTENT"
+            echo "These are the global components used in the project and their expected accessibility attributes (only those found in the diffs, truncated if too large):"
+            echo "$RELEVANT_COMPONENTS_TRUNC"
+            echo
+            echo "Diffs:"
+            echo "$DIFF_CONTENT_TRUNC"
           } > prompt.txt
           PROMPT_B64=$(base64 < prompt.txt)
           echo "prompt_b64=$PROMPT_B64" >> $GITHUB_OUTPUT
@@ -295,9 +351,20 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const body = fs.readFileSync('ai-response.json', 'utf8');
-            const parsed = JSON.parse(body);
-            const message = parsed.choices[0].message.content;
+            let message = 'No AI suggestions could be generated.';
+            try {
+              const body = fs.readFileSync('ai-response.json', 'utf8');
+              const parsed = JSON.parse(body);
+              if (parsed && Array.isArray(parsed.choices) && parsed.choices.length > 0 && parsed.choices[0].message && parsed.choices[0].message.content) {
+                message = parsed.choices[0].message.content;
+              } else if (parsed && parsed.error && parsed.error.message) {
+                message = `AI API error: ${parsed.error.message}`;
+              } else {
+                message = 'AI response was empty or malformed.';
+              }
+            } catch (e) {
+              message = `Error parsing AI response: ${e.message}`;
+            }
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
