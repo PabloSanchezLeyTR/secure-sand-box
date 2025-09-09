@@ -49,7 +49,6 @@ global-components:
             - aria-roledescription
             - a11yAriaDescription
             - ariaExpanded
-            - aria-expanded
             - ariaPressed
             - aria-pressed
             - a11yAriaLabel
@@ -399,7 +398,7 @@ global-components:
             - aria-selected
     saf-button:
         element: button
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - a11y-aria-controls

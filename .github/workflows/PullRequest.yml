@@ -311,9 +311,20 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const body = fs.readFileSync('ai-response.json', 'utf8');
-            const parsed = JSON.parse(body);
-            const message = parsed.choices[0].message.content;
+            let message = 'No AI suggestions could be generated.';
+            try {
+              const body = fs.readFileSync('ai-response.json', 'utf8');
+              const parsed = JSON.parse(body);
+              if (parsed && Array.isArray(parsed.choices) && parsed.choices.length > 0 && parsed.choices[0].message && parsed.choices[0].message.content) {
+                message = parsed.choices[0].message.content;
+              } else if (parsed && parsed.error && parsed.error.message) {
+                message = `AI API error: ${parsed.error.message}`;
+              } else {
+                message = 'AI response was empty or malformed.';
+              }
+            } catch (e) {
+              message = `Error parsing AI response: ${e.message}`;
+            }
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
