@@ -1,0 +1,2 @@
+# Ignore local GitHub Actions runner
+/actions-runner/
