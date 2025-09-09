@@ -1,16 +1,16 @@
 global-components:
     SafActionCard:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-action-card:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafActionCardAction:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -63,7 +63,7 @@ global-components:
             - a11yAriaCurrent
     saf-action-card-action:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -96,29 +96,29 @@ global-components:
             - a11y-aria-current
     SafActivity:
         element: div
-        attributes:
+        required-attributes:
             - headerId
             - timeId
     saf-activity:
         element: div
-        attributes:
+        required-attributes:
             - header-id
             - time-id
     SafAlert:
         element: div
-        attributes:
+        required-attributes:
             - iconAriaLabel
             - closeAriaLabel
             - announce
     saf-alert:
         element: div
-        attributes:
+        required-attributes:
             - icon-aria-label
             - close-aria-label
             - announce
     SafAnchor:
         element: a
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -163,7 +163,7 @@ global-components:
             - a11yAriaCurrent
     saf-anchor:
         element: a
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -188,7 +188,7 @@ global-components:
             - a11y-aria-current
     SafAnchorBase:
         element: a
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -233,7 +233,7 @@ global-components:
             - a11yAriaCurrent
     saf-anchor-base:
         element: a
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -258,25 +258,25 @@ global-components:
             - a11y-aria-current
     SafAvatar:
         element: div
-        attributes:
+        required-attributes:
             - label
             - presentation
     saf-avatar:
         element: div
-        attributes:
+        required-attributes:
             - label
             - presentation
     SafBackToTop:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaDescription
     saf-back-to-top:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-description
     SafBreadcrumbItem:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -321,7 +321,7 @@ global-components:
             - a11yAriaCurrent
     saf-breadcrumb-item:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -346,7 +346,7 @@ global-components:
             - a11y-aria-current
     SafButton:
         element: button
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -431,7 +431,7 @@ global-components:
             - aria-selected
     SafButtonBase:
         element: button
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -483,7 +483,7 @@ global-components:
             - aria-selected
     saf-button-base:
         element: button
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - a11y-aria-controls
@@ -516,16 +516,16 @@ global-components:
             - aria-selected
     SafButtonGroup:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-button-group:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafCalendar:
         element: div
-        attributes:
+        required-attributes:
             - monthSelectAriaLabel
             - datePickerAriaLabel
             - prevMonthAriaLabel
@@ -533,7 +533,7 @@ global-components:
             - yearSelectAriaLabel
     saf-calendar:
         element: div
-        attributes:
+        required-attributes:
             - month-select-aria-label
             - date-picker-aria-label
             - prev-month-aria-label
@@ -541,52 +541,52 @@ global-components:
             - year-select-aria-label
     SafCard:
         element: div
-        attributes:
+        required-attributes:
             - headingLevel
     saf-card:
         element: div
-        attributes:
+        required-attributes:
             - heading-level
     SafChat:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
             - messageAriaLabel
     saf-chat:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
             - message-aria-label
     SafCheckbox:
         element: input
-        attributes:
+        required-attributes:
             - type: checkbox
             - a11yAriaDescription
             - errorAriaLabel
             - a11yAriaLabel
     saf-checkbox:
         element: input
-        attributes:
+        required-attributes:
             - type: checkbox
             - a11y-aria-description
             - error-aria-label
             - a11y-aria-label
     SafCheckboxGroup:
         element: div
-        attributes:
+        required-attributes:
             - optionalText
             - errorAriaLabel
             - requiredAriaText
     saf-checkbox-group:
         element: div
-        attributes:
+        required-attributes:
             - optional-text
             - error-aria-label
             - required-aria-text
     SafChip:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -638,7 +638,7 @@ global-components:
             - aria-selected
     saf-chip:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - a11y-aria-controls
@@ -671,7 +671,7 @@ global-components:
             - aria-selected
     SafCombobox:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -721,7 +721,7 @@ global-components:
             - ariaDescribedbyIds
     saf-combobox:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-current
@@ -747,16 +747,16 @@ global-components:
             - a11y-aria-description
     SafCommentField:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-comment-field:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafDateMaskedInput:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -800,7 +800,7 @@ global-components:
             - errorAriaLabel
     saf-date-masked-input:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -825,16 +825,16 @@ global-components:
             - error-aria-label
     SafDatePicker:
         element: input
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-date-picker:
         element: input
-        attributes:
+        required-attributes:
             - aria-*
     SafDialog:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabel
             - closeAriaLabel
             - ariaTitleLevel
@@ -843,22 +843,22 @@ global-components:
             - aria-subtitle-level
     saf-dialog:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label
             - close-aria-label
             - aria-title-level
             - aria-subtitle-level
     SafDivider:
         element: div
-        attributes:
+        required-attributes:
             - role
     saf-divider:
         element: div
-        attributes:
+        required-attributes:
             - role
     SafDrawer:
         element: div
-        attributes:
+        required-attributes:
             - closeAriaLabel
             - ariaTitleLevel
             - aria-title-level
@@ -867,66 +867,66 @@ global-components:
             - a11yAriaLabel
     saf-drawer:
         element: div
-        attributes:
+        required-attributes:
             - close-aria-label
             - aria-title-level
             - aria-subtitle-level
             - a11y-aria-label
     SafEmptyState:
         element: div
-        attributes:
+        required-attributes:
             - emptyStateTitle
             - ariaTitleLevel
             - aria-title-level
     saf-empty-state:
         element: div
-        attributes:
+        required-attributes:
             - empty-state-title
             - aria-title-level
     SafFacetItem:
         element: div
-        attributes:
+        required-attributes:
             - expandAriaLabel
             - collapseAriaLabel
     saf-facet-item:
         element: div
-        attributes:
+        required-attributes:
             - expand-aria-label
             - collapse-aria-label
     SafFacetedFilter:
         element: div
-        attributes:
+        required-attributes:
             - ariaTitleLevel
             - aria-title-level
             - ariaSubtitleLevel
             - aria-subtitle-level
     saf-faceted-filter:
         element: div
-        attributes:
+        required-attributes:
             - aria-title-level
             - aria-subtitle-level
     SafFlipper:
         element: div
-        attributes:
+        required-attributes:
             - hiddenFromAT
             - aria-hidden
     saf-flipper:
         element: div
-        attributes:
+        required-attributes:
             - aria-hidden
     SafFooter:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabelAnchorGroup
             - a11yAriaLabelSocialIcons
     saf-footer:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label-anchor-group
             - a11y-aria-label-social-icons
     SafFormButton:
         element: button
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -978,7 +978,7 @@ global-components:
             - aria-selected
     saf-form-button:
         element: button
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - a11y-aria-controls
@@ -1011,7 +1011,7 @@ global-components:
             - aria-selected
     SafIcon:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabelledBy
             - aria-labelledby
             - ariaLabel
@@ -1019,22 +1019,22 @@ global-components:
             - presentation
     saf-icon:
         element: div
-        attributes:
+        required-attributes:
             - aria-labelledby
             - aria-label
             - presentation
     SafList:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
             - ariaLabel
     saf-list:
         element: div
-        attributes:
+        required-attributes:
             - aria-*
     SafListbox:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1079,7 +1079,7 @@ global-components:
             - aria-labelledby
     saf-listbox:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1101,7 +1101,7 @@ global-components:
             - aria-labelledby
     SafListboxAbstract:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1144,7 +1144,7 @@ global-components:
             - ariaMultiSelectable
     saf-listbox-abstract:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1165,39 +1165,39 @@ global-components:
             - aria-roledescription
     SafListboxOptionValue:
         element: option
-        attributes:
+        required-attributes:
             - aria-*
     saf-listbox-option-value:
         element: option
-        attributes:
+        required-attributes:
             - aria-*
     SafMenu:
         element: div
-        attributes:
+        required-attributes:
             - aria-*
     saf-menu:
         element: div
-        attributes:
+        required-attributes:
             - aria-*
     SafMenuItem:
         element: div
-        attributes:
+        required-attributes:
             - role
     saf-menu-item:
         element: div
-        attributes:
+        required-attributes:
             - role
     SafMessageBox:
         element: div
-        attributes:
+        required-attributes:
             - avatarPresentation
     saf-message-box:
         element: div
-        attributes:
+        required-attributes:
             - avatar-presentation
     SafNumberField:
         element: input
-        attributes:
+        required-attributes:
             - type: number
             - ariaAtomic
             - aria-atomic
@@ -1242,7 +1242,7 @@ global-components:
             - a11yAriaDescription
     saf-number-field:
         element: input
-        attributes:
+        required-attributes:
             - type: number
             - aria-atomic
             - aria-busy
@@ -1268,7 +1268,7 @@ global-components:
             - a11y-aria-description
     SafOption:
         element: option
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1317,7 +1317,7 @@ global-components:
             - aria-setsize
     saf-option:
         element: option
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1343,28 +1343,28 @@ global-components:
             - aria-setsize
     SafPagination:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
             - dataAriaLive
     saf-pagination:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
             - data-aria-live
     SafProductHeader:
         element: div
-        attributes:
+        required-attributes:
             - globalAriaLabel
             - tasksAriaLabel
     saf-product-header:
         element: div
-        attributes:
+        required-attributes:
             - global-aria-label
             - tasks-aria-label
     SafProgress:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
             - label
@@ -1379,7 +1379,7 @@ global-components:
             - announce
     saf-progress:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
             - label
             - aria-valuenow
@@ -1389,7 +1389,7 @@ global-components:
             - announce
     SafProgressRing:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
             - ariaValueNow
@@ -1404,7 +1404,7 @@ global-components:
             - completionMessage
     saf-progress-ring:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
             - aria-valuenow
             - aria-valuemin
@@ -1414,30 +1414,30 @@ global-components:
             - completion-message
     SafRadio:
         element: input
-        attributes:
+        required-attributes:
             - type: radio
             - a11yAriaDescription
             - a11yAriaLabel
             - ariaLabelledbyIds
     saf-radio:
         element: input
-        attributes:
+        required-attributes:
             - type: radio
             - a11y-aria-description
             - a11y-aria-label
     SafRadioGroup:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabel
             - errorAriaLabel
     saf-radio-group:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label
             - error-aria-label
     SafSearchField:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1479,7 +1479,7 @@ global-components:
             - a11yAriaDescription
     saf-search-field:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1502,7 +1502,7 @@ global-components:
             - a11y-aria-description
     SafSelect:
         element: select
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1546,7 +1546,7 @@ global-components:
             - aria-labelledby
     saf-select:
         element: select
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-current
@@ -1567,17 +1567,17 @@ global-components:
             - aria-labelledby
     SafSideNav:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
             - ariaExpanded
     saf-side-nav:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafSkipLink:
         element: div
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1622,7 +1622,7 @@ global-components:
             - a11yAriaCurrent
     saf-skip-link:
         element: div
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1647,7 +1647,7 @@ global-components:
             - a11y-aria-current
     SafStatus:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabelledBy
             - aria-labelledby
             - ariaRole
@@ -1659,7 +1659,7 @@ global-components:
             - warningAriaLabel
     saf-status:
         element: div
-        attributes:
+        required-attributes:
             - aria-labelledby
             - aria-role
             - paused-aria-label
@@ -1669,40 +1669,40 @@ global-components:
             - warning-aria-label
     SafStep:
         element: div
-        attributes:
+        required-attributes:
             - statusLabel
     saf-step:
         element: div
-        attributes:
+        required-attributes:
             - status-label
     SafStepper:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-stepper:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafTable:
         element: table
-        attributes:
+        required-attributes:
             - aria-*
     saf-table:
         element: table
-        attributes:
+        required-attributes:
             - aria-*
     SafTabs:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabel
     saf-tabs:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label
     SafTextArea:
         element: textarea
-        attributes:
+        required-attributes:
             - ariaAtomic
             - aria-atomic
             - ariaBusy
@@ -1745,7 +1745,7 @@ global-components:
             - errorAriaLabel
     saf-text-area:
         element: textarea
-        attributes:
+        required-attributes:
             - aria-atomic
             - aria-busy
             - aria-controls
@@ -1769,7 +1769,7 @@ global-components:
             - error-aria-label
     SafTextField:
         element: input
-        attributes:
+        required-attributes:
             - type: search
             - ariaAtomic
             - aria-atomic
@@ -1814,7 +1814,7 @@ global-components:
             - errorAriaLabel
     saf-text-field:
         element: input
-        attributes:
+        required-attributes:
             - type: search
             - aria-atomic
             - aria-busy
@@ -1840,35 +1840,35 @@ global-components:
             - error-aria-label
     SafToolbar:
         element: div
-        attributes:
+        required-attributes:
             - ariaLabel
             - aria-label
     saf-toolbar:
         element: div
-        attributes:
+        required-attributes:
             - aria-label
     SafWindow:
         element: div
-        attributes:
+        required-attributes:
             - closeAriaLabel
             - ariaSelectedAttr
     saf-window:
         element: div
-        attributes:
+        required-attributes:
             - close-aria-label
     SafWindows:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabel
     saf-windows:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label
     SafWizard:
         element: div
-        attributes:
+        required-attributes:
             - a11yAriaLabel
     saf-wizard:
         element: div
-        attributes:
+        required-attributes:
             - a11y-aria-label
