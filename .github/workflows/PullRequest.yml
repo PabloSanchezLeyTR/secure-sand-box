@@ -279,7 +279,7 @@ jobs:
             echo "prompt_b64=$(echo -n 'No existing HTML files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
             exit 0
           fi
-          # Get only the diff (changed lines) for each HTML file
+          # Get only the diff (changed lines) for each HTML file, and truncate if too large
           DIFF_CONTENT=""
           COMPONENTS_USED=""
           BASE_REF="${{ github.event.pull_request.base.ref }}"
@@ -296,10 +296,14 @@ jobs:
               done
             fi
           done
-          if [ -z "$DIFF_CONTENT" ]; then
-            DIFF_CONTENT="No HTML diffs detected in this PR."
+          # Truncate diff content to first 400 lines if too large
+          DIFF_CONTENT_TRUNC=$(echo "$DIFF_CONTENT" | head -n 400)
+          if [ -z "$DIFF_CONTENT_TRUNC" ]; then
+            DIFF_CONTENT_TRUNC="No HTML diffs detected in this PR."
+          elif [ $(echo "$DIFF_CONTENT" | wc -l) -gt 400 ]; then
+            DIFF_CONTENT_TRUNC="$DIFF_CONTENT_TRUNC\n... Diff truncated to first 400 lines ..."
           fi
-          # Extract only relevant sections from COMPONENTS_INFO
+          # Extract only relevant sections from COMPONENTS_INFO, truncate if too large
           RELEVANT_COMPONENTS=""
           for tag in $(echo $COMPONENTS_USED | tr ' ' '\n' | sort | uniq); do
             # Use awk to extract the block for the tag (YAML block)
@@ -308,8 +312,12 @@ jobs:
               RELEVANT_COMPONENTS="$RELEVANT_COMPONENTS\n$BLOCK"
             fi
           done
-          if [ -z "$RELEVANT_COMPONENTS" ]; then
-            RELEVANT_COMPONENTS="No relevant global components detected in the diffs."
+          # Truncate relevant components to first 100 lines if too large
+          RELEVANT_COMPONENTS_TRUNC=$(echo "$RELEVANT_COMPONENTS" | head -n 100)
+          if [ -z "$RELEVANT_COMPONENTS_TRUNC" ]; then
+            RELEVANT_COMPONENTS_TRUNC="No relevant global components detected in the diffs."
+          elif [ $(echo "$RELEVANT_COMPONENTS" | wc -l) -gt 100 ]; then
+            RELEVANT_COMPONENTS_TRUNC="$RELEVANT_COMPONENTS_TRUNC\n... Components truncated to first 100 lines ..."
           fi
           {
             echo "You are an expert in UX and accessibility. Review the following HTML code diffs and suggest improvements in:"
@@ -317,11 +325,11 @@ jobs:
             echo "- Visual consistency and design best practices"
             echo "- Clean and maintainable code (especially in React or Angular)"
             echo
-            echo "These are the global components used in the project and their expected accessibility attributes (only those found in the diffs):"
-            echo "$RELEVANT_COMPONENTS"
+            echo "These are the global components used in the project and their expected accessibility attributes (only those found in the diffs, truncated if too large):"
+            echo "$RELEVANT_COMPONENTS_TRUNC"
             echo
             echo "Diffs:"
-            echo "$DIFF_CONTENT"
+            echo "$DIFF_CONTENT_TRUNC"
           } > prompt.txt
           PROMPT_B64=$(base64 < prompt.txt)
           echo "prompt_b64=$PROMPT_B64" >> $GITHUB_OUTPUT
