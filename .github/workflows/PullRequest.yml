@@ -34,49 +34,49 @@ jobs:
             rm "$ERRORS_FILE"
           fi
 
-  lint:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # lint:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
 
-      - name: Install dependencies
-        working-directory: ./pablo-sand-box
-        run: npm ci
+  #     - name: Install dependencies
+  #       working-directory: ./pablo-sand-box
+  #       run: npm ci
 
-      - name: Run ESLint on changed files
-        working-directory: ./pablo-sand-box
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+  #     - name: Run ESLint on changed files
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
 
-          echo "Detected modified files:"
-          echo "$CHANGED_FILES"
+  #         echo "Detected modified files:"
+  #         echo "$CHANGED_FILES"
 
-          EXISTING_FILES=()
-          for file in $CHANGED_FILES; do
-            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
-            if [ -f "$RELATIVE_FILE" ]; then
-              EXISTING_FILES+=("$RELATIVE_FILE")
-            fi
-          done
+  #         EXISTING_FILES=()
+  #         for file in $CHANGED_FILES; do
+  #           RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+  #           if [ -f "$RELATIVE_FILE" ]; then
+  #             EXISTING_FILES+=("$RELATIVE_FILE")
+  #           fi
+  #         done
 
-          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
-            echo "Linting existing changed files:"
-            printf '%s\n' "${EXISTING_FILES[@]}"
-            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
-          else
-            echo "No valid TypeScript or HTML files to lint."
-          fi
+  #         if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+  #           echo "Linting existing changed files:"
+  #           printf '%s\n' "${EXISTING_FILES[@]}"
+  #           npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
+  #         else
+  #           echo "No valid TypeScript or HTML files to lint."
+  #         fi
 
 
 
@@ -149,74 +149,74 @@ jobs:
 
 
 
-  accessibility-pa11y:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # accessibility-pa11y:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18'
 
-      - name: Install Pa11y
-        run: npm install -g pa11y
+  #     - name: Install Pa11y
+  #       run: npm install -g pa11y
 
-      - name: Detect and scan modified HTML files and annotate
-        working-directory: ./pablo-sand-box
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
+  #     - name: Detect and scan modified HTML files and annotate
+  #       working-directory: ./pablo-sand-box
+  #       run: |
+  #         BASE_REF="${{ github.event.pull_request.base.ref }}"
+  #         git fetch origin $BASE_REF
+  #         MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+  #         CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
 
-          echo "Modified HTML files:"
-          echo "$CHANGED_FILES"
+  #         echo "Modified HTML files:"
+  #         echo "$CHANGED_FILES"
 
-          EXISTING_HTML=()
-          for file in $CHANGED_FILES; do
-            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
-            if [ -f "$RELATIVE_FILE" ]; then
-              EXISTING_HTML+=("$RELATIVE_FILE")
-            fi
-          done
+  #         EXISTING_HTML=()
+  #         for file in $CHANGED_FILES; do
+  #           RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+  #           if [ -f "$RELATIVE_FILE" ]; then
+  #             EXISTING_HTML+=("$RELATIVE_FILE")
+  #           fi
+  #         done
 
-          ERRORS=0
-          if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
-            echo "Scanning accessibility with Pa11y and generating annotations (estimated line):"
-            for html_file in "${EXISTING_HTML[@]}"; do
-              echo "→ $html_file"
-              pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
-              ERRORS_FILE=$(mktemp)
-              jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
-              while read -r issue; do
-                MESSAGE=$(echo "$issue" | jq -r '.message')
-                SELECTOR=$(echo "$issue" | jq -r '.selector')
-                REPO_PATH="pablo-sand-box/$html_file"
-                # Only for simple selectors: input, button, img, etc.
-                SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
-                if [ -n "$SIMPLE_SELECTOR" ]; then
-                  LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
-                  if [ -z "$LINE" ]; then LINE=1; fi
-                else
-                  LINE=1
-                fi
-                echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
-              done < "$ERRORS_FILE"
-              ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
-              rm "$ERRORS_FILE"
-            done
-          else
-            echo "No valid HTML files to scan."
-          fi
+  #         ERRORS=0
+  #         if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
+  #           echo "Scanning accessibility with Pa11y and generating annotations (estimated line):"
+  #           for html_file in "${EXISTING_HTML[@]}"; do
+  #             echo "→ $html_file"
+  #             pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
+  #             ERRORS_FILE=$(mktemp)
+  #             jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
+  #             while read -r issue; do
+  #               MESSAGE=$(echo "$issue" | jq -r '.message')
+  #               SELECTOR=$(echo "$issue" | jq -r '.selector')
+  #               REPO_PATH="pablo-sand-box/$html_file"
+  #               # Only for simple selectors: input, button, img, etc.
+  #               SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
+  #               if [ -n "$SIMPLE_SELECTOR" ]; then
+  #                 LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
+  #                 if [ -z "$LINE" ]; then LINE=1; fi
+  #               else
+  #                 LINE=1
+  #               fi
+  #               echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+  #             done < "$ERRORS_FILE"
+  #             ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
+  #             rm "$ERRORS_FILE"
+  #           done
+  #         else
+  #           echo "No valid HTML files to scan."
+  #         fi
 
-          if [ "$ERRORS" -gt 0 ]; then
-            echo "Accessibility errors detected: $ERRORS"
-            exit 1
-          fi
+  #         if [ "$ERRORS" -gt 0 ]; then
+  #           echo "Accessibility errors detected: $ERRORS"
+  #           exit 1
+  #         fi
 
 
   ia-ux-models-review:

@@ -1,3 +1,4 @@
+var UXE = UXETeam;
 import { Component } from '@angular/core';
 
 @Component({
