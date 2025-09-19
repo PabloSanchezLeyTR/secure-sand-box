@@ -18,10 +18,10 @@ jobs:
           node-version: '18'
 
 
-      - name: Authenticate with JFrog Artifactory
+      - name: Authenticate with JFrog Artifactory (temporary .npmrc)
         run: |
-          echo "//thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/:_authToken=${{ secrets.JFROG_TOKEN }}" > ~/.npmrc
-          echo "registry=https://thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/" >> ~/.npmrc
+            echo "//thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/:_authToken=${{ secrets.JFROG_TOKEN }}" > ~/.npmrc
+            echo "registry=https://thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/" >> ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
