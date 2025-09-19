@@ -1,4 +1,4 @@
-name: Deploy Angular to GitHub Pages with JFrog (Self-hosted)
+name: Deploy Angular to GitHub Pages with JFrog (Debug)
 
 on:
   push:
@@ -21,16 +21,45 @@ jobs:
         with:
           node-version: 18
 
+      - name: Print environment info (debug)
+        run: |
+          echo "USER: $USER"
+          echo "HOME: $HOME"
+          echo "PWD: $PWD"
+          node -v
+          npm -v
+          env | sort
+
       - name: Configure npm for JFrog Artifactory
         run: |
           echo "//tu-org.jfrog.io/artifactory/api/npm/npm-repo/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
           echo "registry=https://tu-org.jfrog.io/artifactory/api/npm/npm-repo/" >> .npmrc
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Show .npmrc (sin token)
+        run: cat .npmrc | grep -v _authToken
+
+      - name: Show .npmrc (con token, SOLO debug local, ¡borra esto después!)
+        # Quita este paso si subes logs a GitHub Actions público
+        if: runner.name == 'pabloRunner'
+        run: cat .npmrc
+
+      - name: Show npm config
+        run: npm config ls
+
+      - name: Try npm whoami (verifica login)
+        run: npm whoami || echo "NPM whoami falló"
+
+      - name: List package.json registries (debug extra)
+        run: grep registry package.json || echo "No se encuentra registry en package.json"
+
+      - name: Install dependencies (con debug)
+        run: npm ci --loglevel verbose
 
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
+
+      - name: List build output (debug)
+        run: ls -lh docs
 
       - name: Deploy to GitHub Pages (gh-pages branch)
         uses: peaceiris/actions-gh-pages@v4
