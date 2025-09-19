@@ -24,7 +24,7 @@ jobs:
 
       - name: Generate .npmrc for JFrog & Agora
         run: |
-          cat <<'EOF' > .npmrc
+            cat <<EOF > .npmrc
             @208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
             @dcl:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
             @dcl-ue:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
