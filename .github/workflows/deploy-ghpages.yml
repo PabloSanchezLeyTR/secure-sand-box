@@ -47,6 +47,7 @@ jobs:
       
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
+        working-directory: ./pablo-sand-box
 
       - name: List build output (debug)
         run: ls -lh docs || echo "No se generó docs"
