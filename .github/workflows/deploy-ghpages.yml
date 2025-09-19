@@ -7,7 +7,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -22,7 +22,6 @@ jobs:
         with:
           node-version: '18'
 
-          # Instalación SOLO del paquete de Agora (NO usa .npmrc, solo env)
       - name: Install @axe-devtools/axe-linter-connector from Agora
         env:
           "npm_config_@axe-devtools:registry": "https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/"
@@ -35,7 +34,6 @@ jobs:
 
 
 
-      # Instalación de TODAS las dependencias desde JFrog (usa tu package.json)
       - name: Install dependencies from JFrog
         env:
             "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
