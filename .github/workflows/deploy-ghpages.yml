@@ -1,4 +1,4 @@
-name: Deploy Angular to GitHub Pages with JFrog (Debug Mejorado)
+name: Deploy Angular to GitHub Pages with JFrog & Dequecloud (Debug)
 
 on:
   push:
@@ -21,15 +21,6 @@ jobs:
         with:
           node-version: 18
 
-      - name: Print environment info (debug)
-        run: |
-          echo "USER: $USER"
-          echo "HOME: $HOME"
-          echo "PWD: $PWD"
-          node -v
-          npm -v
-          env | sort
-
       - name: Backup and remove global .npmrc (si existe)
         run: |
           if [ -f $HOME/.npmrc ]; then
@@ -44,8 +35,7 @@ jobs:
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
           echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
           echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
-          # Si tienes más registries privados, agrega aquí la línea y el token correspondiente
-          # echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
+          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" >> .npmrc
 
       - name: Show .npmrc (sin token)
         run: cat .npmrc | grep -v _authToken
@@ -59,9 +49,6 @@ jobs:
 
       - name: Try npm whoami (verifica login)
         run: npm whoami || echo "NPM whoami falló"
-
-      - name: List package.json registries (debug extra)
-        run: grep registry package.json || echo "No se encuentra registry en package.json"
 
       - name: Install dependencies (con debug)
         run: npm ci --loglevel verbose
