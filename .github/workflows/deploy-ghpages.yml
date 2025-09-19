@@ -1,4 +1,4 @@
-name: Deploy Angular to GitHub Pages with JFrog & Dequecloud (Debug)
+name: Deploy Angular to GitHub Pages with JFrog (limpio, debug)
 
 on:
   push:
@@ -21,6 +21,15 @@ jobs:
         with:
           node-version: 18
 
+      - name: Print environment info (debug)
+        run: |
+          echo "USER: $USER"
+          echo "HOME: $HOME"
+          echo "PWD: $PWD"
+          node -v
+          npm -v
+          env | sort
+
       - name: Backup and remove global .npmrc (si existe)
         run: |
           if [ -f $HOME/.npmrc ]; then
@@ -30,25 +39,30 @@ jobs:
             echo "No hay .npmrc global en $HOME"
           fi
 
-      - name: Prepara .npmrc local para TODOS los registries
+      - name: Prepara .npmrc local para JFrog
         run: |
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
           echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
           echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
-          echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}" >> .npmrc
 
       - name: Show .npmrc (sin token)
         run: cat .npmrc | grep -v _authToken
-
-      - name: Show .npmrc (con token, SOLO debug local, ¡borra esto después!)
-        if: runner.name == 'pabloRunner'
-        run: cat .npmrc
 
       - name: Show npm config
         run: npm config ls
 
       - name: Try npm whoami (verifica login)
         run: npm whoami || echo "NPM whoami falló"
+
+      - name: Busca referencias a agora.dequecloud.com en el lockfile
+        run: |
+          if grep -q "agora.dequecloud.com" package-lock.json; then
+            echo "¡Referencia encontrada! Limpiando lockfile y node_modules..."
+            rm -rf node_modules package-lock.json
+            npm install
+          else
+            echo "No hay referencias a agora.dequecloud.com en package-lock.json"
+          fi
 
       - name: Install dependencies (con debug)
         run: npm ci --loglevel verbose
