@@ -56,6 +56,6 @@ jobs:
         if: github.ref == 'refs/heads/main' && success()
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./pablo-sand-box/docs
-          publish_branch: gh-pages
+            github_token: ${{ secrets.GH_PAGES_TOKEN }}
+            publish_dir: ./pablo-sand-box/docs
+            publish_branch: gh-pages
