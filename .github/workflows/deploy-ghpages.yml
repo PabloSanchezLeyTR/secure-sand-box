@@ -1,91 +1,39 @@
-name: Deploy Angular to GitHub Pages with JFrog Auth
+name: Deploy Angular to GitHub Pages with JFrog (Self-hosted)
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
 
-      # 1. Diagnóstico: Verifica variables de entorno relacionadas con npm
-      - name: Diagnóstico de variables de entorno npm
-        run: env | grep -i npm || echo "Sin variables NPM"
-
-      # 2. Diagnóstico: Verifica si existe un .npmrc global en el home
-      - name: Diagnóstico de .npmrc global
+      - name: Configure npm for JFrog Artifactory
         run: |
-          if [ -f /Users/pablo/.npmrc ]; then
-            echo "Existe .npmrc global:"
-            cat /Users/pablo/.npmrc
-          else
-            echo "No existe .npmrc global"
-          fi
+          echo "//tu-org.jfrog.io/artifactory/api/npm/npm-repo/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
+          echo "registry=https://tu-org.jfrog.io/artifactory/api/npm/npm-repo/" >> .npmrc
 
-      # 3. Limpia credenciales heredadas de npm
-      - name: Limpiar credenciales heredadas de npm
-        run: |
-          echo "Eliminando posibles credenciales heredadas..."
-          rm -f ~/.npmrc
-          rm -f ~/.npm/_auth.json
-          unset NPM_TOKEN
+      - name: Install dependencies
+        run: npm ci
 
-      # 4. Genera el .npmrc dinámico correctamente para tu setup
-      - name: Configurar autenticación JFrog solo para @saffron y limpiar auth pública
-        run: |
-          echo "registry=https://registry.npmjs.org/" > ~/.npmrc
-          echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_TR }}" >> ~/.npmrc
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          # IMPORTANTE: Forzar que el registry público NO use auth
-          echo "//registry.npmjs.org/:_authToken=" >> ~/.npmrc
-
-      # 5. Verifica el contenido generado del .npmrc
-      - name: Verificar .npmrc generado
-        run: |
-          echo "Contenido de .npmrc:"
-          cat ~/.npmrc | sed 's/_authToken=.*/_authToken=*** (oculto)/'
-
-      # 6. Verifica que el token secreto sí llega al runner
-      - name: Verificar que el token llega al runner
-        run: |
-          if [ -z "${{ secrets.ARTIFACTORY_TOKEN_TR }}" ]; then
-            echo "El token NO está seteado"
-            exit 1
-          else
-            echo "El token está presente"
-          fi
-
-      # 7. Diagnóstico de autenticación real con JFrog
-      - name: Probar autenticación JFrog con npm whoami
-        run: npm whoami --userconfig ~/.npmrc || echo "Autenticación fallida"
-
-      # 8. Instala dependencias (con el .npmrc generado)
-      - name: Instalar dependencias ignorando configuración global
-        run: npm ci --userconfig ~/.npmrc --no-audit --no-fund
-
-      # 9. Si falla, muestra el log de npm para debug adicional
-      - name: Mostrar último log de npm si falla
-        if: failure()
-        run: cat /Users/pablo/.npm/_logs/*.log || echo "No se encontró log"
-
-      # 10. Compilar y desplegar si todo está correcto
-      - name: Compilar proyecto Angular
+      - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
 
-      - name: Desplegar en gh-pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          publish_branch: gh-pages
