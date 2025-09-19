@@ -1,4 +1,4 @@
-name: CI JFrog + Agora
+name: CI Install JFrog & Agora Packages Without .npmrc
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: self-hosted  # O usa ubuntu-latest según tu runner
+    runs-on: self-hosted # O usa ubuntu-latest si tu runner es cloud
 
     steps:
       - name: Checkout code
@@ -22,34 +22,33 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Generate .npmrc for JFrog & Agora
-        run: |
-            cat <<EOF > .npmrc
-            @208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @dcl:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @dcl-ue:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @tr:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @tr-digital:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            //tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}
-            //tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true
-            @axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AGORA_NPM_AUTH }}
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true
-            EOF
-
-      - name: Show .npmrc (debug, no secrets)
-        run: cat .npmrc | grep -v _auth | grep -v email
-
-      - name: Debug secrets presence
-        run: |
-            if [ -z "${{ secrets.AGORA_NPM_AUTH }}" ]; then echo "AGORA_NPM_AUTH EMPTY"; else echo "AGORA_NPM_AUTH OK"; fi
-            if [ -z "${{ secrets.NPM_EMAIL }}" ]; then echo "NPM_EMAIL EMPTY"; else echo "NPM_EMAIL OK"; fi
-
-      - name: Install dependencies
+      # Instalación de TODAS las dependencias desde JFrog (usa tu package.json)
+      - name: Install dependencies from JFrog
+        env:
+          "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
+          "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
+          "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
         run: npm ci
 
-      - name: Build/test/other steps
-        run: echo "Aquí irían tus comandos de build, test, lint, etc."
+      # Instalación SOLO del paquete de Agora (NO usa .npmrc, solo env)
+      - name: Install @axe-devtools/axe-linter-connector from Agora
+        env:
+          "npm_config_@axe-devtools:registry": "https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/"
+          "npm_config_//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth": ${{ secrets.AGORA_NPM_AUTH }}
+          "npm_config_//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email": ${{ secrets.NPM_EMAIL }}
+          "npm_config_//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth": "true"
+        run: |
+          npm install @axe-devtools/axe-linter-connector --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+
+
+      - name: Build Angular project
+        run: ng build --output-path docs --base-href /pablo-sand-box/
+
+      - name: List build output (debug)
+        run: ls -lh docs || echo "No se generó docs"
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
