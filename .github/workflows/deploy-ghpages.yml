@@ -25,9 +25,9 @@ jobs:
       # Instalación de TODAS las dependencias desde JFrog (usa tu package.json)
       - name: Install dependencies from JFrog
         env:
-          "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
-          "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
-          "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
+            "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
+            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
+            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
         run: npm ci
 
       # Instalación SOLO del paquete de Agora (NO usa .npmrc, solo env)
