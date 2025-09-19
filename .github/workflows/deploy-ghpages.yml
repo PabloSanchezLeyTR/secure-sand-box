@@ -50,12 +50,12 @@ jobs:
       
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
-        working-directory: frontend/angular-app
+        working-directory: ./pablo-sand-box
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' && success()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: frontend/angular-app/docs
+          publish_dir: ./pablo-sand-box/docs
           publish_branch: gh-pages
