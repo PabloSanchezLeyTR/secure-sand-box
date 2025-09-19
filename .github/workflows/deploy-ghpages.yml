@@ -37,8 +37,9 @@ jobs:
           echo "Contenido de .npmrc:"
           cat ~/.npmrc | sed 's/_authToken=.*/_authToken=*** (oculto)/'
 
-      - name: Instalar dependencias
-        run: npm ci
+      - name: Instalar dependencias ignorando configuración global
+        run: npm ci --userconfig ~/.npmrc --no-audit --no-fund
+
 
       - name: Compilar proyecto Angular
         run: ng build --output-path docs --base-href /pablo-sand-box/
