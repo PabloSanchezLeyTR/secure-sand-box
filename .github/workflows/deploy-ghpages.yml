@@ -1,4 +1,4 @@
-name: Deploy Angular to GitHub Pages with JFrog (Debug)
+name: Deploy Angular to GitHub Pages with JFrog (Debug Mejorado)
 
 on:
   push:
@@ -30,16 +30,27 @@ jobs:
           npm -v
           env | sort
 
-      - name: Configure npm for JFrog Artifactory
+      - name: Backup and remove global .npmrc (si existe)
         run: |
-          echo "//tu-org.jfrog.io/artifactory/api/npm/npm-repo/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
-          echo "registry=https://tu-org.jfrog.io/artifactory/api/npm/npm-repo/" >> .npmrc
+          if [ -f $HOME/.npmrc ]; then
+            echo "Moviendo $HOME/.npmrc a $HOME/.npmrc.backup"
+            mv $HOME/.npmrc $HOME/.npmrc.backup
+          else
+            echo "No hay .npmrc global en $HOME"
+          fi
+
+      - name: Prepara .npmrc local para TODOS los registries
+        run: |
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
+          echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
+          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
+          # Si tienes más registries privados, agrega aquí la línea y el token correspondiente
+          # echo "//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" >> .npmrc
 
       - name: Show .npmrc (sin token)
         run: cat .npmrc | grep -v _authToken
 
       - name: Show .npmrc (con token, SOLO debug local, ¡borra esto después!)
-        # Quita este paso si subes logs a GitHub Actions público
         if: runner.name == 'pabloRunner'
         run: cat .npmrc
 
@@ -59,7 +70,7 @@ jobs:
         run: ng build --output-path docs --base-href /pablo-sand-box/
 
       - name: List build output (debug)
-        run: ls -lh docs
+        run: ls -lh docs || echo "No se generó docs"
 
       - name: Deploy to GitHub Pages (gh-pages branch)
         uses: peaceiris/actions-gh-pages@v4
