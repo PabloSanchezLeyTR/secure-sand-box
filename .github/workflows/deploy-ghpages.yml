@@ -18,12 +18,12 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Eliminar .npmrc global si existe
+      - name: Limpiar credenciales heredadas de npm
         run: |
-          if [ -f ~/.npmrc ]; then
-            echo "Eliminando .npmrc global para evitar conflictos..."
-            rm ~/.npmrc
-          fi
+          echo "Eliminando posibles credenciales heredadas..."
+          rm -f ~/.npmrc
+          rm -f ~/.npm/_auth.json
+          unset NPM_TOKEN
 
       - name: Configurar autenticación JFrog y registry público
         run: |
@@ -31,6 +31,7 @@ jobs:
           echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_TR }}" >> ~/.npmrc
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=" >> ~/.npmrc
 
       - name: Verificar .npmrc generado
         run: |
