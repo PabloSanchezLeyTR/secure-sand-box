@@ -37,9 +37,17 @@ jobs:
           echo "Contenido de .npmrc:"
           cat ~/.npmrc | sed 's/_authToken=.*/_authToken=*** (oculto)/'
 
+      - name: Verificar que el token llega al runner
+        run: |
+          if [ -z "${{ secrets.ARTIFACTORY_TOKEN_TR }}" ]; then
+            echo "El token NO está seteado"
+            exit 1
+          else
+            echo "El token está presente"
+          fi
+
       - name: Instalar dependencias ignorando configuración global
         run: npm ci --userconfig ~/.npmrc --no-audit --no-fund
-
 
       - name: Compilar proyecto Angular
         run: ng build --output-path docs --base-href /pablo-sand-box/
