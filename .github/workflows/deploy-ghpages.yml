@@ -1,80 +1,50 @@
-name: Deploy Angular to GitHub Pages with JFrog (limpio, debug)
+name: CI JFrog + Agora
 
 on:
   push:
     branches:
       - main
+  pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build-and-deploy:
-    runs-on: self-hosted
+  build:
+    runs-on: self-hosted  # O usa ubuntu-latest según tu runner
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Print environment info (debug)
+      - name: Generate .npmrc for JFrog & Agora
         run: |
-          echo "USER: $USER"
-          echo "HOME: $HOME"
-          echo "PWD: $PWD"
-          node -v
-          npm -v
-          env | sort
+          cat <<'EOF' > .npmrc
+            @208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            @dcl:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            @dcl-ue:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            @saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            @tr:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            @tr-digital:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
+            //tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}
+            //tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true
+            @axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.AGORA_NPM_AUTH }}
+            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}
+            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true
+            EOF
 
-      - name: Backup and remove global .npmrc (si existe)
-        run: |
-          if [ -f $HOME/.npmrc ]; then
-            echo "Moviendo $HOME/.npmrc a $HOME/.npmrc.backup"
-            mv $HOME/.npmrc $HOME/.npmrc.backup
-          else
-            echo "No hay .npmrc global en $HOME"
-          fi
+      - name: Show .npmrc (debug, no secrets)
+        run: cat .npmrc | grep -v _auth | grep -v email
 
-      - name: Prepara .npmrc local para JFrog
-        run: |
-          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}" > .npmrc
-          echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
-          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> .npmrc
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Show .npmrc (sin token)
-        run: cat .npmrc | grep -v _authToken
-
-      - name: Show npm config
-        run: npm config ls
-
-      - name: Try npm whoami (verifica login)
-        run: npm whoami || echo "NPM whoami falló"
-
-      - name: Busca referencias a agora.dequecloud.com en el lockfile
-        run: |
-          if grep -q "agora.dequecloud.com" package-lock.json; then
-            echo "¡Referencia encontrada! Limpiando lockfile y node_modules..."
-            rm -rf node_modules package-lock.json
-            npm install
-          else
-            echo "No hay referencias a agora.dequecloud.com en package-lock.json"
-          fi
-
-      - name: Install dependencies (con debug)
-        run: npm ci --loglevel verbose
-
-      - name: Build Angular project
-        run: ng build --output-path docs --base-href /pablo-sand-box/
-
-      - name: List build output (debug)
-        run: ls -lh docs || echo "No se generó docs"
-
-      - name: Deploy to GitHub Pages (gh-pages branch)
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+      - name: Build/test/other steps
+        run: echo "Aquí irían tus comandos de build, test, lint, etc."

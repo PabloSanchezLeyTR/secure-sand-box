@@ -1,50 +1,373 @@
-name: CI Build with JFrog and Agora Registries
+name: Code PR Quality Checks
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
-
-permissions:
-  contents: read
 
 jobs:
-  build:
+  css-no-important:
     runs-on: self-hosted
+    steps:
+      - name: Check for !important in changed CSS files and annotate
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
+          ERRORS_FILE=$(mktemp)
+          for file in $CHANGED_CSS; do
+            if [ -f "$file" ]; then
+              rel_file="$file"
+              grep -n '!important' "$file" | while IFS=: read -r line _; do
+                echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
+                echo 1 >> "$ERRORS_FILE"
+              done
+            fi
+          done
+          if [ -s "$ERRORS_FILE" ]; then
+            echo "Failing because !important was found."
+            rm "$ERRORS_FILE"
+            exit 1
+          else
+            echo "'!important' was not found in the changed CSS files."
+            rm "$ERRORS_FILE"
+          fi
 
+  lint:
+    runs-on: self-hosted
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Generate .npmrc for JFrog & Agora
-        run: |
-          cat <<'EOF' > .npmrc
-            @208177:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @dcl:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @dcl-ue:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @tr:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            @tr-digital:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            registry=https://tr1.jfrog.io/artifactory/api/npm/npm/
-            //tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_AUTH_TOKEN }}
-            //tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true
-            @axe-devtools:registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:_auth=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:email=${{ secrets.NPM_EMAIL }}
-            //agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth=true
-            EOF
-
-      - name: Show .npmrc (debug, no secrets)
-        run: cat .npmrc | grep -v _auth | grep -v email
-
       - name: Install dependencies
+        working-directory: ./pablo-sand-box
         run: npm ci
 
-      - name: Build/test/other steps
-        run: echo "Aquí irían tus comandos de build, test, lint, etc."
+      - name: Run ESLint on changed files
+        working-directory: ./pablo-sand-box
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- 'src/**/*.ts' 'src/**/*.html')
+
+          echo "Detected modified files:"
+          echo "$CHANGED_FILES"
+
+          EXISTING_FILES=()
+          for file in $CHANGED_FILES; do
+            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+            if [ -f "$RELATIVE_FILE" ]; then
+              EXISTING_FILES+=("$RELATIVE_FILE")
+            fi
+          done
+
+          if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+            echo "Linting existing changed files:"
+            printf '%s\n' "${EXISTING_FILES[@]}"
+            npx eslint "${EXISTING_FILES[@]}" --ext .ts,.html --max-warnings=0
+          else
+            echo "No valid TypeScript or HTML files to lint."
+          fi
+
+
+
+  axe-lint:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install jq
+        run: |
+          which jq || brew install jq || sudo apt-get install -y jq
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Download axe-linter binary from Agora
+        env:
+          ARTIFACTORY_TOKEN_AXELINTER: ${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }}
+        run: |
+          curl -L -H "X-JFrog-Art-Api: $ARTIFACTORY_TOKEN_AXELINTER" \
+            -o axe-linter-connector-macos \
+            "https://agora.dequecloud.com/artifactory/linter-bin/axe-linter-connector/4.10.9/packages/connector/pkgs/@axe-devtools/axe-linter-connector-macos"
+          chmod +x axe-linter-connector-macos
+          xattr -d com.apple.quarantine axe-linter-connector-macos || true
+
+      - name: Start Angular server in background
+        run: |
+          nohup npx ng serve --port 4200 --disable-host-check > /dev/null 2>&1 &
+          sleep 30
+
+      - name: Run axe-linter and fail on accessibility errors
+        run: |
+          mkdir -p ./dist/reports
+          ./axe-linter-connector-macos \
+            --reporter=sonarqube \
+            --destination=./dist/reports \
+            --filename=axe-report.json \
+            --client-id=${{ secrets.NPM_EMAIL }} \
+            --client-secret=${{ secrets.ARTIFACTORY_TOKEN_AXELINTER }} \
+            --api-key=${{ secrets.AXE_LINTER_API_KEY }} \
+            --source=./pablo-sand-box/src \
+            --local \
+            --debug
+
+          echo "\n--- Accessibility Report ---"
+          if [ -f ./dist/reports/axe-report.json ]; then
+            cat ./dist/reports/axe-report.json
+            ERRORS=$(jq '.issues | length' ./dist/reports/axe-report.json)
+            if [ "$ERRORS" -gt 0 ]; then
+              echo "\nAccessibility errors found: $ERRORS"
+              exit 1
+            else
+              echo "\nNo accessibility errors found."
+            fi
+          else
+            echo "axe-report.json not found!"
+            exit 1
+          fi
+
+      - name: Upload axe report
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-accessibility-report
+          path: ./dist/reports/axe-report.json
+
+
+
+  accessibility-pa11y:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Pa11y
+        run: npm install -g pa11y
+
+      - name: Detect and scan modified HTML files and annotate
+        working-directory: ./pablo-sand-box
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
+          CHANGED_FILES=$(git diff --name-only $MERGE_BASE..HEAD -- '*.html')
+
+          echo "Modified HTML files:"
+          echo "$CHANGED_FILES"
+
+          EXISTING_HTML=()
+          for file in $CHANGED_FILES; do
+            RELATIVE_FILE=$(echo "$file" | sed 's|^pablo-sand-box/||')
+            if [ -f "$RELATIVE_FILE" ]; then
+              EXISTING_HTML+=("$RELATIVE_FILE")
+            fi
+          done
+
+          ERRORS=0
+          if [ ${#EXISTING_HTML[@]} -gt 0 ]; then
+            echo "Scanning accessibility with Pa11y and generating annotations (estimated line):"
+            for html_file in "${EXISTING_HTML[@]}"; do
+              echo "→ $html_file"
+              pa11y --reporter json file://$(pwd)/$html_file > pa11y-report.json || true
+              ERRORS_FILE=$(mktemp)
+              jq -c '.[] | select(.type=="error")' pa11y-report.json > "$ERRORS_FILE"
+              while read -r issue; do
+                MESSAGE=$(echo "$issue" | jq -r '.message')
+                SELECTOR=$(echo "$issue" | jq -r '.selector')
+                REPO_PATH="pablo-sand-box/$html_file"
+                # Only for simple selectors: input, button, img, etc.
+                SIMPLE_SELECTOR=$(echo "$SELECTOR" | grep -Eo '^[a-zA-Z0-9#\.-]+')
+                if [ -n "$SIMPLE_SELECTOR" ]; then
+                  LINE=$(grep -n -m1 "$SIMPLE_SELECTOR" "$html_file" | cut -d: -f1)
+                  if [ -z "$LINE" ]; then LINE=1; fi
+                else
+                  LINE=1
+                fi
+                echo "::error file=$REPO_PATH,line=$LINE::[Pa11y] $MESSAGE (selector: $SELECTOR)"
+              done < "$ERRORS_FILE"
+              ERRORS=$((ERRORS + $(wc -l < "$ERRORS_FILE")))
+              rm "$ERRORS_FILE"
+            done
+          else
+            echo "No valid HTML files to scan."
+          fi
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Accessibility errors detected: $ERRORS"
+            exit 1
+          fi
+
+
+  ia-ux-models-review:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed UX-related files
+        id: changed
+        run: |
+          set -e
+          set -x
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          echo "BASE_REF: $BASE_REF"
+          git fetch origin $BASE_REF || { echo "git fetch failed"; exit 1; }
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD) || { echo "git merge-base failed"; exit 1; }
+          echo "MERGE_BASE: $MERGE_BASE"
+          FILES=$(git diff --name-only $MERGE_BASE..HEAD | grep -E '\.css$|\.scss$|\.less$|\.html$|\.js$|\.ts$|\.tsx$|\.jsx$' | paste -sd ',' -)
+          echo "Detected files: $FILES"
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Load global components definitions
+        id: components
+        run: |
+          COMPONENTS_FILE=".github/global-components.yml"
+          if [ ! -f "$COMPONENTS_FILE" ]; then
+            echo "No global components file found."
+            echo "components_info=$(echo -n 'No global components defined.' | base64)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          COMPONENTS_CONTENT=$(cat "$COMPONENTS_FILE")
+          echo "components_info=$(echo -n "$COMPONENTS_CONTENT" | base64)" >> $GITHUB_OUTPUT
+
+      - name: Prepare prompt for GitHub Models
+        id: prompt
+        run: |
+          FILES="${{ steps.changed.outputs.files }}"
+          COMPONENTS_INFO=$(echo "${{ steps.components.outputs.components_info }}" | base64 -d)
+          echo "Analyzing files: $FILES"
+          if [ -z "$FILES" ]; then
+            echo "No UX-related files changed."
+            echo "prompt_b64=$(echo -n 'No UX-related files changed in this PR.' | base64)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # Incluir archivos HTML, CSS, SCSS, TS, JSX, TSX
+          FILE_LIST=$(echo $FILES | tr ',' '\n' | grep -E '\.(html|css|scss|ts|tsx|jsx)$' | tr '\n' ' ')
+          EXISTING_FILES=""
+          for f in $FILE_LIST; do
+            if [ -f "$f" ]; then
+              EXISTING_FILES="$EXISTING_FILES $f"
+            else
+              echo "Warning: $f does not exist."
+            fi
+          done
+          if [ -z "$EXISTING_FILES" ]; then
+            echo "No existing relevant files to analyze."
+            echo "prompt_b64=$(echo -n 'No existing relevant files to analyze in this PR.' | base64)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          # Obtener los diffs de cada archivo relevante
+          DIFF_CONTENT=""
+          COMPONENTS_USED=""
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          git fetch origin $BASE_REF || { echo "git fetch failed"; exit 1; }
+          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD) || { echo "git merge-base failed"; exit 1; }
+          for f in $EXISTING_FILES; do
+            DIFF=$(git diff $MERGE_BASE..HEAD -- $f)
+            if [ -n "$DIFF" ]; then
+              DIFF_CONTENT="$DIFF_CONTENT\n\n--- Diff for $f ---\n$DIFF"
+              # Detectar componentes solo en HTML/JSX/TSX
+              if echo "$f" | grep -E '\.(html|jsx|tsx)$' > /dev/null; then
+                TAGS=$(echo "$DIFF" | grep -oE '<[a-zA-Z0-9\-]+' | sed 's/[< ]//g' | sort | uniq)
+                for tag in $TAGS; do
+                  COMPONENTS_USED="$COMPONENTS_USED $tag"
+                done
+              fi
+            fi
+          done
+          # Truncar el diff a las primeras 400 líneas si es necesario
+          DIFF_CONTENT_TRUNC=$(echo "$DIFF_CONTENT" | head -n 400)
+          if [ -z "$DIFF_CONTENT_TRUNC" ]; then
+            DIFF_CONTENT_TRUNC="No relevant diffs detected in this PR."
+          elif [ $(echo "$DIFF_CONTENT" | wc -l) -gt 400 ]; then
+            DIFF_CONTENT_TRUNC="$DIFF_CONTENT_TRUNC\n... Diff truncated to first 400 lines ..."
+          fi
+          # Extraer solo los componentes relevantes de COMPONENTS_INFO, truncar si es necesario
+          RELEVANT_COMPONENTS=""
+          for tag in $(echo $COMPONENTS_USED | tr ' ' '\n' | sort | uniq); do
+            BLOCK=$(echo "$COMPONENTS_INFO" | awk -v t="$tag:" '$0 ~ "^ *"t {printit=1} printit && NF==0 {printit=0} printit {print $0}' | sed '/^$/d')
+            if [ -n "$BLOCK" ]; then
+              RELEVANT_COMPONENTS="$RELEVANT_COMPONENTS\n$BLOCK"
+            fi
+          done
+          RELEVANT_COMPONENTS_TRUNC=$(echo "$RELEVANT_COMPONENTS" | head -n 100)
+          if [ -z "$RELEVANT_COMPONENTS_TRUNC" ]; then
+            RELEVANT_COMPONENTS_TRUNC="No relevant global components detected in the diffs."
+          elif [ $(echo "$RELEVANT_COMPONENTS" | wc -l) -gt 100 ]; then
+            RELEVANT_COMPONENTS_TRUNC="$RELEVANT_COMPONENTS_TRUNC\n... Components truncated to first 100 lines ..."
+          fi
+          {
+            echo "You are an expert in UX and accessibility. Review the following code diffs and suggest improvements in:"
+            echo "- Accessibility (use of roles, aria, focus, navigation)"
+            echo "- Visual consistency and design best practices"
+            echo "- Clean and maintainable code (especially in React or Angular)"
+            echo
+            echo "These are the global components used in the project and their expected accessibility attributes (only those found in the diffs, truncated if too large):"
+            echo "$RELEVANT_COMPONENTS_TRUNC"
+            echo
+            echo "Diffs:"
+            echo "$DIFF_CONTENT_TRUNC"
+          } > prompt.txt
+          PROMPT_B64=$(base64 < prompt.txt)
+          echo "prompt_b64=$PROMPT_B64" >> $GITHUB_OUTPUT
+
+      - name: Call GitHub Models API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${{ steps.prompt.outputs.prompt_b64 }}" | base64 -d > prompt.txt
+          PAYLOAD=$(jq -Rs '{model: "openai/gpt-4o", messages: [{role: "user", content: .}]}' < prompt.txt)
+          RESPONSE=$(curl -s https://models.github.ai/inference/chat/completions \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+          echo "$RESPONSE" > ai-response.json
+
+      - name: Comment AI suggestions on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let message = 'No AI suggestions could be generated.';
+            try {
+              const body = fs.readFileSync('ai-response.json', 'utf8');
+              const parsed = JSON.parse(body);
+              if (parsed && Array.isArray(parsed.choices) && parsed.choices.length > 0 && parsed.choices[0].message && parsed.choices[0].message.content) {
+                message = parsed.choices[0].message.content;
+              } else if (parsed && parsed.error && parsed.error.message) {
+                message = `AI API error: ${parsed.error.message}`;
+              } else {
+                message = 'AI response was empty or malformed.';
+              }
+            } catch (e) {
+              message = `Error parsing AI response: ${e.message}`;
+            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🧠 **AI Suggestions for UX and Accessibility**:\n\n${message}`
+            });
