@@ -25,7 +25,7 @@ jobs:
           rm -f ~/.npm/_auth.json
           unset NPM_TOKEN
 
-      - name: Configurar autenticación JFrog y registry público
+      - name: Configurar autenticación JFrog solo para @saffron
         run: |
           echo "registry=https://registry.npmjs.org/" > ~/.npmrc
           echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
