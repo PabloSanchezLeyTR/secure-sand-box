@@ -42,6 +42,8 @@ jobs:
             "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
         run: npm ci
 
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
       
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
