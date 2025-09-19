@@ -49,7 +49,7 @@ jobs:
         working-directory: ./pablo-sand-box
       
       - name: Build Angular project
-        run: ng build --output-path docs --base-href /pablo-sand-box/
+        run: ng build --output-path docs --base-href /secure-sand-box/
         working-directory: ./pablo-sand-box
 
       - name: Deploy to GitHub Pages
