@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: self-hosted
+
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
@@ -19,18 +20,19 @@ jobs:
 
       - name: Configure JFrog Artifactory auth
         run: |
-          echo "//artifactory.example.com/artifactory/api/npm/npm/:_authToken=${{ secrets.JFROG_TOKEN }}" > .npmrc
-          echo "registry=https://artifactory.example.com/artifactory/api/npm/npm/" >> .npmrc
+          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" > ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_TR }}" >> ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build Angular project
-        run: ng build --output-path dist --base-href /secure-sand-box/
+        run: ng build --output-path docs --base-href /pablo-sand-box/
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./docs
           publish_branch: gh-pages
