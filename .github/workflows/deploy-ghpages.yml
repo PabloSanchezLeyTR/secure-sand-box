@@ -18,33 +18,34 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Borrar .npmrc global temporalmente
+      - name: Eliminar .npmrc global si existe
         run: |
-          mv ~/.npmrc ~/.npmrc.bak || true
+          if [ -f ~/.npmrc ]; then
+            echo "Eliminando .npmrc global para evitar conflictos..."
+            rm ~/.npmrc
+          fi
 
-      - name: Configure JFrog Artifactory auth
+      - name: Configurar autenticación JFrog y registry público
         run: |
           echo "registry=https://registry.npmjs.org/" > ~/.npmrc
           echo "@saffron:registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" >> ~/.npmrc
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_TR }}" >> ~/.npmrc
           echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
-          echo "//registry.npmjs.org/:_authToken=" >> ~/.npmrc
 
       - name: Verificar .npmrc generado
         run: |
           echo "Contenido de .npmrc:"
           cat ~/.npmrc | sed 's/_authToken=.*/_authToken=*** (oculto)/'
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm ci
 
-      - name: Build Angular project
+      - name: Compilar proyecto Angular
         run: ng build --output-path docs --base-href /pablo-sand-box/
 
-      - name: Deploy to gh-pages
+      - name: Desplegar en gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           publish_branch: gh-pages
-
