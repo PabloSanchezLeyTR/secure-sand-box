@@ -31,6 +31,7 @@ jobs:
           "npm_config_//agora.dequecloud.com/artifactory/api/npm/devtools-npm/:always-auth": "true"
         run: |
           npm install @axe-devtools/axe-linter-connector --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
+        working-directory: ./pablo-sand-box
 
 
 
@@ -41,9 +42,11 @@ jobs:
             "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
             "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
         run: npm ci
+        working-directory: ./pablo-sand-box
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
+        working-directory: ./pablo-sand-box
       
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
