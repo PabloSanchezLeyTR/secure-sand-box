@@ -22,15 +22,7 @@ jobs:
         with:
           node-version: '18'
 
-      # Instalación de TODAS las dependencias desde JFrog (usa tu package.json)
-      - name: Install dependencies from JFrog
-        env:
-            "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
-            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
-            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
-        run: npm ci
-
-      # Instalación SOLO del paquete de Agora (NO usa .npmrc, solo env)
+          # Instalación SOLO del paquete de Agora (NO usa .npmrc, solo env)
       - name: Install @axe-devtools/axe-linter-connector from Agora
         env:
           "npm_config_@axe-devtools:registry": "https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/"
@@ -41,6 +33,16 @@ jobs:
           npm install @axe-devtools/axe-linter-connector --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
 
 
+
+      # Instalación de TODAS las dependencias desde JFrog (usa tu package.json)
+      - name: Install dependencies from JFrog
+        env:
+            "npm_config_registry": "https://tr1.jfrog.io/artifactory/api/npm/npm/"
+            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken": ${{ secrets.JFROG_AUTH_TOKEN }}
+            "npm_config_//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth": "true"
+        run: npm ci
+
+      
       - name: Build Angular project
         run: ng build --output-path docs --base-href /pablo-sand-box/
 
