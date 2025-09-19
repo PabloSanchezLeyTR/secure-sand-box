@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages from root
+name: Deploy Angular to GitHub Pages with JFrog Auth
 
 on:
   push:
@@ -12,27 +12,27 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-
-      - name: Authenticate with JFrog Artifactory (temporary .npmrc)
+      - name: Configure JFrog Artifactory auth
         run: |
-            echo "//thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/:_authToken=${{ secrets.JFROG_TOKEN }}" > ~/.npmrc
-            echo "registry=https://thomsonreuters.jfrog.io/artifactory/api/npm/tr-npm/" >> ~/.npmrc
+          echo "registry=https://tr1.jfrog.io/artifactory/api/npm/npm/" > ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:_authToken=${{ secrets.ARTIFACTORY_TOKEN_TR }}" >> ~/.npmrc
+          echo "//tr1.jfrog.io/artifactory/api/npm/npm/:always-auth=true" >> ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build Angular project
-        run: ng build --output-path dist --base-href /secure-sand-box/
+        run: ng build --output-path docs --base-href /pablo-sand-box/
 
-      - name: Deploy to gh-pages root
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./docs
           publish_branch: gh-pages
-          force_orphan: true  # Opcional: limpia el branch antes de publicar
