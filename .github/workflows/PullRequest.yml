@@ -7,7 +7,7 @@ on:
 
 jobs:
   css-no-important:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Check for !important in changed CSS files and annotate
         run: |
@@ -35,7 +35,7 @@ jobs:
           fi
 
   lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -81,7 +81,7 @@ jobs:
 
 
   axe-lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -150,7 +150,7 @@ jobs:
 
 
   accessibility-pa11y:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -220,7 +220,7 @@ jobs:
 
 
   ia-ux-models-review:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

@@ -4,14 +4,13 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 permissions:
   contents: write
 
 jobs:
   build:
-    runs-on: self-hosted # O usa ubuntu-latest si tu runner es cloud
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
