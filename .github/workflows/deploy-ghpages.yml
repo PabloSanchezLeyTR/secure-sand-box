@@ -4,12 +4,16 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types:
+      - closed
 
 permissions:
   contents: write
 
 jobs:
   build:
+    if: github.event_name == 'push'
     runs-on: self-hosted
 
     steps:
@@ -30,8 +34,6 @@ jobs:
         run: |
           npm install @axe-devtools/axe-linter-connector --registry=https://agora.dequecloud.com/artifactory/api/npm/devtools-npm/
         working-directory: ./pablo-sand-box
-
-
 
       - name: Install dependencies from JFrog
         env:
@@ -56,3 +58,23 @@ jobs:
             github_token: ${{ secrets.GH_PAGES_TOKEN }}
             publish_dir: ./pablo-sand-box/docs
             publish_branch: gh-pages
+
+  delete-branch:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete branch after PR merge (except main, master, gh-pages)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [[ "$BRANCH" != "main" && "$BRANCH" != "master" && "$BRANCH" != "gh-pages" ]]; then
+            echo "Deleting branch $BRANCH from $REPO"
+            curl -s -X DELETE \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/$REPO/git/refs/heads/$BRANCH
+          else
+            echo "Not deleting protected branch: $BRANCH"
+          fi
