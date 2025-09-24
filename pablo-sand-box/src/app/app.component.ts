@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'pablo-sand-box';
+
+  goToReact() {
+  window.location.href = './checkbox-ui/index.html';
+}
+
 }

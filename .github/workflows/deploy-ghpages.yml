@@ -51,6 +51,14 @@ jobs:
         run: ng build --output-path docs --base-href /secure-sand-box/
         working-directory: ./pablo-sand-box
 
+      - name: Build React project
+        run: |
+          npm install
+          npm run build
+          mkdir -p ../docs/checkbox-ui
+          cp -r out/* ../docs/checkbox-ui  # Si usas Next.js con `next export`
+        working-directory: ./pablo-sand-box/checkb
+
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' && success()
         uses: peaceiris/actions-gh-pages@v4
@@ -58,6 +66,8 @@ jobs:
             github_token: ${{ secrets.GH_PAGES_TOKEN }}
             publish_dir: ./pablo-sand-box/docs
             publish_branch: gh-pages
+
+
 
   delete-branch:
     if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
