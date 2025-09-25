@@ -51,17 +51,31 @@ jobs:
         run: ng build --output-path docs --base-href /secure-sand-box/
         working-directory: ./pablo-sand-box
 
-      - name: Build React project (no error if missing)
+      - name: Build React project (soporta out/ y build/)
         run: |
           if [ -d ./pablo-sand-box/checkb ]; then
             cd ./pablo-sand-box/checkb
             npm install || true
             npm run build || true
             mkdir -p ../../docs/checkbox-ui
-            cp -r out/* ../../docs/checkbox-ui 2>/dev/null || true
+            if [ -d out ]; then
+              cp -r out/* ../../docs/checkbox-ui 2>/dev/null || true
+              echo "Copiado desde out/"
+            fi
+            if [ -d build ]; then
+              cp -r build/* ../../docs/checkbox-ui 2>/dev/null || true
+              echo "Copiado desde build/"
+            fi
             cd -
           else
             echo "React folder not found, skipping build."
+          fi
+          echo "Archivos en docs/checkbox-ui:"
+          ls -l ./pablo-sand-box/docs/checkbox-ui || true
+          if [ -f ./pablo-sand-box/docs/checkbox-ui/index.html ]; then
+            echo "index.html encontrado en docs/checkbox-ui"
+          else
+            echo "index.html NO encontrado en docs/checkbox-ui"
           fi
         shell: bash
 
