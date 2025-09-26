@@ -53,8 +53,8 @@ jobs:
 
       - name: Build React project (Next.js export y debug)
         run: |
-          if [ -d ./pablo-sand-box/checkb ]; then
-            cd ./pablo-sand-box/checkb
+          if [ -d ./pablo-sand-box/checkbox-ui ]; then
+            cd ./pablo-sand-box/checkbox-ui
             npm install || true
             npm run build || true
             echo "Contenido de out/ tras next export:"
