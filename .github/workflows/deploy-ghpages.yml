@@ -51,12 +51,18 @@ jobs:
         run: ng build --output-path docs --base-href /secure-sand-box/
         working-directory: ./pablo-sand-box
 
+      - name: Debug antes de build React
+        run: |
+          echo "Contenido inicial de checkbox-ui:"
+          ls -l ./pablo-sand-box/checkbox-ui || true
       - name: Build React project (Next.js static export y debug)
         run: |
           if [ -d ./pablo-sand-box/checkbox-ui ]; then
             cd ./pablo-sand-box/checkbox-ui
             npm install || true
             npm run build || true
+            echo "Contenido de checkbox-ui después de build:"
+            ls -l
             if [ -d out ]; then
               echo "Contenido de out/ tras next build (output: export):"
               ls -l out
