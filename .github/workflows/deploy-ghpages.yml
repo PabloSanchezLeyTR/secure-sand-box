@@ -66,10 +66,11 @@ jobs:
             if [ -d out ]; then
               echo "Contenido de out/ tras next build (output: export):"
               ls -l out
-              rm -rf ../../docs/checkbox-ui
-              mkdir -p ../../docs/checkbox-ui
-              cp -a out/. ../../docs/checkbox-ui/
-              echo "Copiado desde out/ (con archivos ocultos y estructura completa)"
+              export DOCS_PATH="${{ github.workspace }}/pablo-sand-box/docs/checkbox-ui"
+              rm -rf "$DOCS_PATH"
+              mkdir -p "$DOCS_PATH"
+              cp -a out/. "$DOCS_PATH/"
+              echo "Copiado desde out/ a $DOCS_PATH (con archivos ocultos y estructura completa)"
             else
               echo "No se generó la carpeta out/"
             fi
@@ -79,12 +80,13 @@ jobs:
           fi
       - name: Debug archivos estáticos React
         run: |
-          echo "Archivos en docs/checkbox-ui:"
-          ls -l ./pablo-sand-box/docs/checkbox-ui || true
-          if [ -f ./pablo-sand-box/docs/checkbox-ui/index.html ]; then
-            echo "index.html encontrado en docs/checkbox-ui"
+          DOCS_PATH="${{ github.workspace }}/pablo-sand-box/docs/checkbox-ui"
+          echo "Archivos en $DOCS_PATH:"
+          ls -l "$DOCS_PATH" || true
+          if [ -f "$DOCS_PATH/index.html" ]; then
+            echo "index.html encontrado en $DOCS_PATH"
           else
-            echo "index.html NO encontrado en docs/checkbox-ui"
+            echo "index.html NO encontrado en $DOCS_PATH"
           fi
         shell: bash
 
