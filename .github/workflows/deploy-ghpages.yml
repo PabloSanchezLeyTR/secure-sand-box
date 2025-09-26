@@ -66,9 +66,10 @@ jobs:
             if [ -d out ]; then
               echo "Contenido de out/ tras next build (output: export):"
               ls -l out
+              rm -rf ../../docs/checkbox-ui
               mkdir -p ../../docs/checkbox-ui
-              cp -r out/* ../../docs/checkbox-ui
-              echo "Copiado desde out/"
+              cp -a out/. ../../docs/checkbox-ui/
+              echo "Copiado desde out/ (con archivos ocultos y estructura completa)"
             else
               echo "No se generó la carpeta out/"
             fi
