@@ -51,21 +51,17 @@ jobs:
         run: ng build --output-path docs --base-href /secure-sand-box/
         working-directory: ./pablo-sand-box
 
-      - name: Build React project (soporta out/ y build/)
+      - name: Build React project (Next.js export y debug)
         run: |
           if [ -d ./pablo-sand-box/checkb ]; then
             cd ./pablo-sand-box/checkb
             npm install || true
             npm run build || true
+            echo "Contenido de out/ tras next export:"
+            ls -l out || true
             mkdir -p ../../docs/checkbox-ui
-            if [ -d out ]; then
-              cp -r out/* ../../docs/checkbox-ui 2>/dev/null || true
-              echo "Copiado desde out/"
-            fi
-            if [ -d build ]; then
-              cp -r build/* ../../docs/checkbox-ui 2>/dev/null || true
-              echo "Copiado desde build/"
-            fi
+            cp -r out/* ../../docs/checkbox-ui 2>/dev/null || true
+            echo "Copiado desde out/"
             cd -
           else
             echo "React folder not found, skipping build."
