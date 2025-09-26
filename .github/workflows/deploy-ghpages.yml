@@ -66,6 +66,8 @@ jobs:
           else
             echo "React folder not found, skipping build."
           fi
+      - name: Debug archivos estáticos React
+        run: |
           echo "Archivos en docs/checkbox-ui:"
           ls -l ./pablo-sand-box/docs/checkbox-ui || true
           if [ -f ./pablo-sand-box/docs/checkbox-ui/index.html ]; then
