@@ -40,6 +40,10 @@ export default function CheckboxDemo() {
     }
   }
 
+  function goToAngular() {
+  window.location.href = '../index.html';
+}
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="mx-auto max-w-6xl">
@@ -95,6 +99,13 @@ export default function CheckboxDemo() {
               />
             </CardContent>
           </Card>
+        </div>
+
+        {/* Go to Angular App Button */}
+        <div className="w-full flex justify-center mt-8">
+          <button onClick={goToAngular} style={{padding: '0.5rem 1rem', fontSize: '1rem'}}>
+            Go to Angular App
+          </button>
         </div>
 
         {/* Selected Options Display */}
