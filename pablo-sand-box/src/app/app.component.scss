@@ -1,17 +1,5 @@
 
-.low-contrast {
-	color: var(--saf-color-background-inverse); // Example: #1A1A1A
-	background: var(--saf-color-interactive-on-secondary-active); // Example: #FFFFFF
-}
-
-
-.low-contrast-1 {
-	color: var(--saf-color-background-inverse);
-	background: var(--saf-color-background);
-}
-
-
-.low-contrast-2 {
-	color: var(--saf-color-background-inverse);
-	background: var(--saf-color-background);
+.bad-label {
+  color: #B0B0B0;
+  background-color: #FFFFFF;
 }
