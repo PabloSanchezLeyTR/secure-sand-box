@@ -59,6 +59,8 @@ jobs:
             npm install || true
             npm run build || true
             if [ -d out ]; then
+              # Copia index.html a 404.html para soportar rutas internas en GitHub Pages
+              cp out/index.html out/404.html
               DOCS_PATH="${{ github.workspace }}/pablo-sand-box/docs/checkbox-ui"
               rm -rf "$DOCS_PATH"
               mkdir -p "$DOCS_PATH"
