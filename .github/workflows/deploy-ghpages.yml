@@ -64,6 +64,16 @@ jobs:
               DOCS_PATH="${{ github.workspace }}/pablo-sand-box/docs/checkbox-ui"
               rm -rf "$DOCS_PATH"
               mkdir -p "$DOCS_PATH"
+              # Fix static resource paths in index.html and 404.html for GitHub Pages
+              for htmlfile in out/index.html out/404.html; do
+                if [ -f "$htmlfile" ]; then
+                  sed -i.bak 's|href="/_next/|href="/secure-sand-box/checkbox-ui/_next/|g' "$htmlfile"
+                  sed -i.bak 's|src="/_next/|src="/secure-sand-box/checkbox-ui/_next/|g' "$htmlfile"
+                  sed -i.bak 's|href="/static/|href="/secure-sand-box/checkbox-ui/static/|g' "$htmlfile"
+                  sed -i.bak 's|src="/static/|src="/secure-sand-box/checkbox-ui/static/|g' "$htmlfile"
+                  rm "$htmlfile.bak"
+                fi
+              done
               cp -a out/. "$DOCS_PATH/"
               echo "Exported static site copied to $DOCS_PATH."
               echo "Listing published files in $DOCS_PATH:"
