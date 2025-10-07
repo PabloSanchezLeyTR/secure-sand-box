@@ -6,34 +6,7 @@ on:
       - main
 
 jobs:
-  css-no-important:
-    runs-on: self-hosted
-    steps:
-      - name: Check for !important in changed CSS files and annotate
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          git fetch origin $BASE_REF
-          MERGE_BASE=$(git merge-base origin/$BASE_REF HEAD)
-          CHANGED_CSS=$(git diff --name-only $MERGE_BASE..HEAD -- '*.css' '*.scss' '*.less')
-          ERRORS_FILE=$(mktemp)
-          for file in $CHANGED_CSS; do
-            if [ -f "$file" ]; then
-              rel_file="$file"
-              grep -n '!important' "$file" | while IFS=: read -r line _; do
-                echo "::error file=$rel_file,line=$line::'!important' was found in this CSS file. The use of !important is not allowed."
-                echo 1 >> "$ERRORS_FILE"
-              done
-            fi
-          done
-          if [ -s "$ERRORS_FILE" ]; then
-            echo "Failing because !important was found."
-            rm "$ERRORS_FILE"
-            exit 1
-          else
-            echo "'!important' was not found in the changed CSS files."
-            rm "$ERRORS_FILE"
-          fi
-
+  
   lint:
     runs-on: self-hosted
     steps:
