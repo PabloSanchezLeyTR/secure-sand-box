@@ -8,7 +8,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "lint": "eslint .",
-    "test": "ng test"
+    "test": "ng test",
+    "axe-linter": "axe-linter-connector -s /Users/pablo/Documents/Repos/sandboxPablo/secure-sand-box/pablo-sand-box/src/app/app.component.html -d . --local --license-key=eyJjb21wYW55TmFtZSI6IlRob21zb24gUmV1dGVycyIsImV4cGlyZXMiOiIyMDI1LTExLTI4VDE4OjMwOjAwLjAwMFoifQ==.37CsNzP8bnyNMdaL5OIBE3p0SeqshjEFefLoCYak2Wm6VbV8dAjPEcT3yO0RkbKsuh6+ZQz+gseb5qUFEwxSmw== --url=https://axe-linter.deque.com",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -33,12 +35,14 @@
     "@angular-eslint/template-parser": "^20.2.0",
     "@angular/cli": "~15.0.0",
     "@angular/compiler-cli": "^15.0.0",
+    "@axe-devtools/axe-linter-connector": "^4.10.10",
     "@eslint/eslintrc": "^3.3.1",
     "@types/jasmine": "~4.3.0",
     "@types/node": "^16.18.126",
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
     "eslint": "^9.34.0",
+    "husky": "^9.1.7",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

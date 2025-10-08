@@ -1,0 +1,116 @@
+echo "Checking for axe-linter dependencies..."
+
+# Function to check if a package exists
+check_package_exists() {
+  local package_name="$1"
+
+  # Check if package.json exists
+  if [ -f "package.json" ]; then
+    # Check if using npm (node_modules exists and package-lock.json exists)
+    if [ -d "node_modules" ] && [ -f "package-lock.json" ]; then
+      if npm list --depth=0 2>/dev/null | grep -q "$package_name"; then
+        return 0
+      fi
+    # Check if using yarn (node_modules exists and yarn.lock exists)
+    elif [ -d "node_modules" ] && [ -f "yarn.lock" ]; then
+      if yarn list --depth=0 2>/dev/null | grep -q "$package_name"; then
+        return 0
+      fi
+    # Check if the package directory exists directly
+    elif [ -d "node_modules/$package_name" ]; then
+      return 0
+    fi
+  fi
+
+  # Package not found
+  return 1
+}
+
+# Check if axe-linter-connector is installed
+if ! check_package_exists "@axe-devtools/axe-linter-connector"; then
+  echo "⚠️ @axe-devtools/axe-linter-connector is not installed, skipping accessibility checks."
+  echo "To enable accessibility checks, please run one of the following:"
+  echo "  npm install @axe-devtools/axe-linter-connector --save-dev"
+  echo "  yarn add @axe-devtools/axe-linter-connector --dev"
+  echo "Continuing with commit..."
+  exit 0
+fi
+
+echo "Executing Axe linter"
+
+# Paths for reports
+FINAL_REPORT_PATH=".husky/final-axe-linter-report.json"
+SINGLE_REPORT_PATH="axe-linter-report.json"
+
+# Clean up any previous reports
+rm -f "$SINGLE_REPORT_PATH"
+rm -f "$FINAL_REPORT_PATH"
+
+# Get staged files and run Axe linter on relevant types
+for i in $(git status --porcelain | sed s/^...//); do
+  if [[ $i == *.html || $i == *.htm || $i == *.tsx || $i == *.vue || $i == *.md || $i == *.markdown ]]; then
+    # Check if merge-reports.js exists
+    if [ ! -f ".husky/merge-reports.js" ]; then
+      echo "⚠️ merge-reports.js not found, skipping accessibility checks."
+      echo "Continuing with commit..."
+      exit 0
+    fi
+
+    # Try to run the script, but continue if it fails
+    # Determine whether to use npm or yarn
+    if [ -f "yarn.lock" ]; then
+      PACKAGE_MANAGER="yarn"
+    else
+      PACKAGE_MANAGER="npm"
+    fi
+
+    # Run using the appropriate package manager
+    if [ "$PACKAGE_MANAGER" = "yarn" ]; then
+      if ! yarn axe-linter --file "$i" --output "$SINGLE_REPORT_PATH" 2>/dev/null || [ ! -f "$SINGLE_REPORT_PATH" ]; then
+        echo "⚠️ Error running axe-linter on $i, skipping accessibility checks."
+        echo "Continuing with commit..."
+        exit 0
+      fi
+    else
+      if ! npm run axe-linter -- --file "$i" --output "$SINGLE_REPORT_PATH" 2>/dev/null || [ ! -f "$SINGLE_REPORT_PATH" ]; then
+        echo "⚠️ Error running axe-linter on $i, skipping accessibility checks."
+        echo "Continuing with commit..."
+        exit 0
+      fi
+    fi
+
+    # Merge the reports
+    if ! node .husky/merge-reports.js "$SINGLE_REPORT_PATH" "$FINAL_REPORT_PATH"; then
+      echo "⚠️ Error merging reports for $i, skipping accessibility checks."
+      echo "Continuing with commit..."
+      exit 0
+    fi
+  fi
+done
+
+# Remove temporary single report
+rm -f "$SINGLE_REPORT_PATH"
+
+# Check if check-report.js exists
+if [ ! -f ".husky/check-report.js" ]; then
+  echo "⚠️ check-report.js not found, skipping report validation."
+  echo "Continuing with commit..."
+  exit 0
+fi
+
+# Run the checker to validate final report
+node .husky/check-report.js "$FINAL_REPORT_PATH"
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo "⚠️ Accessibility issues found. Saving report to .axe-reports..."
+
+  mkdir -p .axe-reports
+  cp "$FINAL_REPORT_PATH" ".axe-reports/axe-report-$(date +%s).json"
+
+  exit 1
+else
+  echo "✅ No accessibility issues found."
+  rm -f "$FINAL_REPORT_PATH"
+  exit 0
+fi

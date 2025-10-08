@@ -1,0 +1,36 @@
+{
+  "issues": [
+    {
+      "engineId": "axe-linter-angular",
+      "ruleId": "button-name (https://dequeuniversity.com/rules/axe/4.10/button-name?application=axe-linter-connector)",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "primaryLocation": {
+        "filePath": "/Users/pablo/Documents/Repos/sandboxPablo/secure-sand-box/pablo-sand-box/src/app/app.component.html",
+        "message": "Buttons must have discernible text",
+        "textRange": {
+          "startLine": 139,
+          "endLine": 139,
+          "startColumn": 0,
+          "endColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "axe-linter-angular",
+      "ruleId": "image-alt (https://dequeuniversity.com/rules/axe/4.10/image-alt?application=axe-linter-connector)",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "primaryLocation": {
+        "filePath": "/Users/pablo/Documents/Repos/sandboxPablo/secure-sand-box/pablo-sand-box/src/app/app.component.html",
+        "message": "Images must have alternative text",
+        "textRange": {
+          "startLine": 142,
+          "endLine": 142,
+          "startColumn": 0,
+          "endColumn": 20
+        }
+      }
+    }
+  ]
+}
