@@ -149,60 +149,25 @@
       <p id="a11y-description">Run comprehensive WCAG 2.1 AA accessibility validation tests and generate Thomson Reuters compliance reports for Pablo Sandbox</p>
     </div>
   </section>
+<saffron-implementation-100></saffron-implementation-100>
 
-  <!-- Documentation Section for Pablo Sandbox -->
-  <section id="docs" class="features-section" aria-labelledby="docs-title">
-    <h2 id="docs-title" class="section-title">Documentation & Resources</h2>
-    <p class="section-description">Access Pablo Sandbox guides, API documentation, and Thomson Reuters accessibility standards.</p>
+<!-- 1. Button without accessible name -->
+<button></button>
 
-    <div class="docs-grid" role="list" aria-label="Documentation resources">
-      <article class="doc-card">
-        <h3 class="doc-title">
-          <a href="/docs/getting-started" class="doc-link">
-            <span class="link-text">Getting Started Guide</span>
-            <span class="visually-hidden"> - Pablo Sandbox setup instructions</span>
-          </a>
-        </h3>
-        <p class="doc-description">Step-by-step setup instructions for all Pablo Sandbox environments and Thomson Reuters standards</p>
-      </article>
+<!-- 2. Image without alt attribute -->
+<img src="logo.png">
 
-      <article class="doc-card">
-        <h3 class="doc-title">
-          <a href="/docs/accessibility" class="doc-link">
-            <span class="link-text">Accessibility Standards</span>
-            <span class="visually-hidden"> - WCAG 2.1 AA compliance for Thomson Reuters</span>
-          </a>
-        </h3>
-        <p class="doc-description">WCAG 2.1 AA compliance guidelines, Thomson Reuters Digital Accessibility Policy, and testing procedures for Pablo Sandbox</p>
-      </article>
+<!-- 3. Saffron button -->
+<saf-button appearance="primary">Click</saf-button>
+
+<!-- 4. Saffron Icon con inline styles -->
+<div style="display: flex; flex-direction: column; align-items: center; flex: 1 1 20%; gap: 8px;">
+        <saf-icon color="#404040" icon-name="plus" appearance="light">
+        </saf-icon>
+        <p style="margin: 0;">
+            <!---->plus
+
+        </p>
     </div>
-  </section>
 
-</main>
-
-<!-- Footer with proper content info role -->
-<footer class="footer" role="contentinfo">
-  <div class="footer-content">
-    <p class="footer-text">&copy; 2025 Thomson Reuters. Pablo Sandbox UXE Platform - WCAG 2.1 AA Compliant.</p>
-    <nav aria-label="Footer navigation" class="footer-nav">
-      <ul class="footer-links">
-        <li>
-          <a href="/privacy" class="footer-link">
-            <span class="link-text">Privacy Policy</span>
-          </a>
-        </li>
-        <li>
-          <a href="/accessibility" class="footer-link">
-            <span class="link-text">Accessibility Statement</span>
-          </a>
-        </li>
-        <li>
-          <a href="/support" class="footer-link">
-            <span class="link-text">Support</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</footer>
 
