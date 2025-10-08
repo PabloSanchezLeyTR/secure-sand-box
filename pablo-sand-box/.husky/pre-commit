@@ -1,0 +1,185 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Pablo Sandbox - WCAG 2.1 AA Accessibility Validation"
+echo "🎯 Thomson Reuters Digital Accessibility Policy Compliance"
+
+# Set strict error handling for Pablo Sandbox requirements
+set -e
+
+# Function to check if a package exists
+check_package_exists() {
+  local package_name="$1"
+
+  if [ -f "package.json" ]; then
+    if [ -d "node_modules" ] && [ -f "package-lock.json" ]; then
+      if npm list --depth=0 2>/dev/null | grep -q "$package_name"; then
+        return 0
+      fi
+    elif [ -d "node_modules" ] && [ -f "yarn.lock" ]; then
+      if yarn list --depth=0 2>/dev/null | grep -q "$package_name"; then
+        return 0
+      fi
+    elif [ -d "node_modules/$package_name" ]; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+# Check if axe-linter-connector is installed (REQUIRED for Thomson Reuters)
+if ! check_package_exists "@axe-devtools/axe-linter-connector"; then
+  echo "❌ @axe-devtools/axe-linter-connector is not installed."
+  echo "🚨 Thomson Reuters Digital Accessibility Policy requires WCAG 2.1 AA validation"
+  echo "📦 Install: npm install @axe-devtools/axe-linter-connector --save-dev"
+  exit 1
+fi
+
+# Check for Saffron design tokens (Thomson Reuters requirement)
+if check_package_exists "@saffron/core-styles"; then
+  echo "✅ Saffron design tokens available for 4.5:1 contrast validation"
+else
+  echo "⚠️  Consider @saffron/core-styles for Thomson Reuters color compliance"
+fi
+
+echo "✅ Executing WCAG 2.1 AA validation for Pablo Sandbox"
+
+# Paths for reports
+FINAL_REPORT_PATH=".husky/final-axe-linter-report.json"
+SINGLE_REPORT_PATH="axe-linter-report.json"
+
+# Clean up any previous reports
+rm -f "$SINGLE_REPORT_PATH"
+rm -f "$FINAL_REPORT_PATH"
+
+# Flag to track if any files were processed
+FILES_PROCESSED=false
+
+# Get STAGED files only (this was the main issue)
+echo "🔍 Scanning staged files for accessibility issues..."
+
+# Use git diff --cached to get only staged files
+for i in $(git diff --cached --name-only --diff-filter=ACM); do
+  # Check Pablo Sandbox supported file types (Next.js, React, Angular)
+  if [[ $i == *.html || $i == *.htm || $i == *.tsx || $i == *.jsx || $i == *.ts || $i == *.vue || $i == *.md || $i == *.markdown ]]; then
+    echo "📝 WCAG 2.1 AA validation for: $i"
+    FILES_PROCESSED=true
+
+    # Check if merge-reports.js exists (REQUIRED)
+    if [ ! -f ".husky/merge-reports.js" ]; then
+      echo "❌ merge-reports.js not found. Required for Pablo Sandbox accessibility validation."
+      exit 1
+    fi
+
+    # Determine package manager
+    if [ -f "yarn.lock" ]; then
+      PACKAGE_MANAGER="yarn"
+    else
+      PACKAGE_MANAGER="npm"
+    fi
+
+    echo "🔧 Running axe-linter on $i..."
+
+    # Run axe-linter with explicit error handling
+    set +e  # Temporarily disable strict mode to capture exit code
+
+    if [ "$PACKAGE_MANAGER" = "yarn" ]; then
+      yarn axe-linter --file "$i" --output "$SINGLE_REPORT_PATH"
+      LINTER_EXIT_CODE=$?
+    else
+      npm run axe-linter -- --file "$i" --output "$SINGLE_REPORT_PATH"
+      LINTER_EXIT_CODE=$?
+    fi
+
+    set -e  # Re-enable strict mode
+
+    # Check if axe-linter failed
+    if [ $LINTER_EXIT_CODE -ne 0 ]; then
+      echo "❌ Axe-linter failed for $i (exit code: $LINTER_EXIT_CODE)"
+      echo "🚨 Thomson Reuters accessibility validation FAILED"
+      exit 1
+    fi
+
+    # Verify report was created and is not empty
+    if [ ! -f "$SINGLE_REPORT_PATH" ] || [ ! -s "$SINGLE_REPORT_PATH" ]; then
+      echo "❌ Axe-linter report not generated or empty for $i"
+      echo "🔧 Verify axe-linter configuration for Pablo Sandbox"
+      exit 1
+    fi
+
+    # Merge the reports
+    if ! node .husky/merge-reports.js "$SINGLE_REPORT_PATH" "$FINAL_REPORT_PATH"; then
+      echo "❌ Error merging accessibility reports for $i"
+      exit 1
+    fi
+
+    # Clean up single report
+    rm -f "$SINGLE_REPORT_PATH"
+  fi
+done
+
+# If no relevant files were processed
+if [ "$FILES_PROCESSED" = false ]; then
+  echo "ℹ️  No files requiring WCAG 2.1 AA validation found in staged changes"
+  echo "✅ Pablo Sandbox accessibility check completed"
+  exit 0
+fi
+
+# Verify final report exists
+if [ ! -f "$FINAL_REPORT_PATH" ] || [ ! -s "$FINAL_REPORT_PATH" ]; then
+  echo "❌ No final accessibility report generated"
+  echo "🛑 COMMIT BLOCKED - Report validation failed"
+  exit 1
+fi
+
+# Check if check-report.js exists (REQUIRED)
+if [ ! -f ".husky/check-report.js" ]; then
+  echo "❌ check-report.js not found. Required for Thomson Reuters compliance validation."
+  exit 1
+fi
+
+echo "📊 Validating WCAG 2.1 AA compliance report..."
+
+# Run the checker to validate final report
+set +e
+node .husky/check-report.js "$FINAL_REPORT_PATH"
+VALIDATION_EXIT_CODE=$?
+set -e
+
+if [ $VALIDATION_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "🚨 WCAG 2.1 AA COMPLIANCE VIOLATIONS DETECTED"
+  echo "🛑 COMMIT BLOCKED - Thomson Reuters Digital Accessibility Policy"
+  echo ""
+
+  # Save report for review
+  mkdir -p .axe-reports
+  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+  REPORT_FILE=".axe-reports/wcag-violations-$TIMESTAMP.json"
+  cp "$FINAL_REPORT_PATH" "$REPORT_FILE"
+
+  echo "📁 Accessibility violation report saved: $REPORT_FILE"
+  echo ""
+  echo "🔧 PABLO SANDBOX REQUIRED ACTIONS:"
+  echo "   1. Review violations in: $REPORT_FILE"
+  echo "   2. Fix WCAG 2.1 AA compliance issues"
+  echo "   3. Ensure 4.5:1 contrast ratio for normal text"
+  echo "   4. Verify keyboard navigation support"
+  echo "   5. Use @saffron/core-styles design tokens"
+  echo ""
+  echo "📖 Thomson Reuters Resources:"
+  echo "   - WCAG 2.1 Guidelines: https://www.w3.org/TR/WCAG21/"
+  echo ""
+  echo "🚫 COMMIT REJECTED - Resolve accessibility issues and retry"
+
+  exit 1
+else
+  echo ""
+  echo "✅ WCAG 2.1 AA COMPLIANCE VALIDATED"
+  echo "🎯 Thomson Reuters Digital Accessibility Policy - PASSED"
+  echo "🚀 Pablo Sandbox commit approved"
+
+  rm -f "$FINAL_REPORT_PATH"
+  exit 0
+fi
