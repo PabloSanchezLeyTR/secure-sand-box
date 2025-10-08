@@ -5,31 +5,37 @@
 <header class="header" role="banner">
   <div class="header-content">
     <div class="logo-container">
-      <saf-logo variant="thomson-reuters" size="medium" color="white"></saf-logo>
+      <saf-logo variant="thomson-reuters" size="medium" color="white" alt="Thomson Reuters Logo"></saf-logo>
       <h1 class="logo">UXE Sandbox</h1>
     </div>
     <nav aria-label="Main navigation" role="navigation">
-      <div class="nav-pills">
-        <a href="#features" class="nav-pill">Features</a>
-        <a href="#tools" class="nav-pill">Tools</a>
-        <a href="#docs" class="nav-pill">Documentation</a>
-      </div>
+      <ul class="nav-pills" role="menubar">
+        <li role="none">
+          <a href="#features" class="nav-pill" role="menuitem" tabindex="0">Features</a>
+        </li>
+        <li role="none">
+          <a href="#tools" class="nav-pill" role="menuitem" tabindex="0">Tools</a>
+        </li>
+        <li role="none">
+          <a href="#docs" class="nav-pill" role="menuitem" tabindex="0">Documentation</a>
+        </li>
+      </ul>
     </nav>
   </div>
 </header>
 
 <!-- Main Content -->
-<main id="main-content" class="main-content" role="main">
+<main id="main-content" class="main-content" role="main" tabindex="-1">
 
   <!-- Hero Section -->
   <section class="hero-section" aria-labelledby="hero-title">
-    <div class="status-indicator" role="status" aria-live="polite">
+    <div class="status-indicator" role="status" aria-live="polite" aria-atomic="true">
       <span class="status-dot" aria-hidden="true"></span>
-      <span>System active and running</span>
+      <span class="status-text">System active and running</span>
     </div>
 
     <h2 id="hero-title" class="hero-title">
-      Welcome to the Pablo Sandbox
+      Welcome to the UXE Sandbox
     </h2>
 
     <p class="hero-subtitle">
@@ -40,15 +46,16 @@
       <saf-button
         variant="primary"
         density="comfortable"
-        aria-describedby="dev-description">
+        aria-describedby="docs-description"
+        type="button">
         <span aria-hidden="true">📚</span>
-       View Documentation
+        View Documentation
       </saf-button>
     </div>
 
+    <!-- Moved descriptions closer to relevant buttons -->
     <div class="sr-only">
-      <p id="dev-description">Launch the development environment with Next.js, React, and Angular pre-configured</p>
-      <p id="docs-description">Access comprehensive WCAG 2.1 AA accessibility documentation</p>
+      <p id="docs-description">Access comprehensive WCAG 2.1 AA accessibility documentation and development guidelines</p>
     </div>
   </section>
 
@@ -59,10 +66,10 @@
       Enterprise-grade tools and frameworks designed for scalable, accessible development following Thomson Reuters standards.
     </p>
 
-    <div class="features-grid">
+    <div class="features-grid" role="list">
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span style="color: white; font-size: 24px;">⚡</span>
+          <span class="icon-text">⚡</span>
         </div>
         <h3 class="feature-title">Multi-Framework Support</h3>
         <p class="feature-description">
@@ -72,7 +79,7 @@
 
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span style="color: white; font-size: 24px;">♿</span>
+          <span class="icon-text">♿</span>
         </div>
         <h3 class="feature-title">WCAG 2.1 AA Compliance</h3>
         <p class="feature-description">
@@ -82,7 +89,7 @@
 
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span style="color: white; font-size: 24px;">🎨</span>
+          <span class="icon-text">🎨</span>
         </div>
         <h3 class="feature-title">Saffron Design System</h3>
         <p class="feature-description">
@@ -90,9 +97,9 @@
         </p>
       </article>
 
-      <article class="feature-card">
+      <article class="feature-card" >
         <div class="feature-icon" aria-hidden="true">
-          <span style="color: white; font-size: 24px;">🔧</span>
+          <span class="icon-text">🔧</span>
         </div>
         <h3 class="feature-title">Enterprise Testing Suite</h3>
         <p class="feature-description">
@@ -102,26 +109,29 @@
     </div>
   </section>
 
-  <!-- Quick Actions -->
-  <section class="features-section" aria-labelledby="actions-title">
+  <!-- Development Environments Section -->
+  <section id="tools" class="features-section" aria-labelledby="actions-title">
     <h2 id="actions-title" class="section-title">Development Environments</h2>
-    <div class="cta-container">
+    <p class="section-description">Choose your preferred development environment to get started quickly.</p>
+
+    <div class="cta-container" role="group" aria-labelledby="actions-title">
       <saf-button
         variant="primary"
         density="comfortable"
         (click)="goToReact()"
-        aria-describedby="react-description">
+        aria-describedby="react-description"
+        type="button">
+        <span aria-hidden="true">⚛️</span>
         React Environment
       </saf-button>
-
     </div>
 
     <div class="sr-only">
-      <p id="react-description">Navigate to the React development environment with Redux state management</p>
-      <p id="angular-description">Access the Angular environment with pre-configured testing suite</p>
-      <p id="nextjs-description">Launch the Next.js environment for server-side rendering</p>
-      <p id="a11y-description">Run comprehensive WCAG 2.1 AA accessibility validation tests</p>
+      <p id="react-description">Navigate to the React development environment with Redux state management and component library</p>
+      <p id="angular-description">Access the Angular environment with pre-configured testing suite and dependency injection</p>
+      <p id="nextjs-description">Launch the Next.js environment for server-side rendering and static site generation</p>
+      <p id="a11y-description">Run comprehensive WCAG 2.1 AA accessibility validation tests and generate compliance reports</p>
     </div>
   </section>
 
-</main>
+
