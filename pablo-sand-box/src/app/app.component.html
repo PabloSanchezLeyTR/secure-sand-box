@@ -1,45 +1,57 @@
-<!-- Skip link for keyboard navigation -->
+<!-- Skip link for keyboard navigation - WCAG 2.1 AA requirement -->
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- Header -->
 <header class="header" role="banner">
   <div class="header-content">
     <div class="logo-container">
-      <saf-logo variant="thomson-reuters" size="medium" color="white" alt="Thomson Reuters Logo"></saf-logo>
-      <h1 class="logo">UXE Sandbox</h1>
+      <saf-logo
+        variant="thomson-reuters"
+        size="medium"
+        color="white"
+        alt="Thomson Reuters Logo - Pablo Sandbox UXE Platform"></saf-logo>
+      <h1 class="logo">Pablo Sandbox</h1>
     </div>
+    <!-- Changed to proper navigation structure for Thomson Reuters standards -->
     <nav aria-label="Main navigation" role="navigation">
-      <ul class="nav-pills" role="menubar">
-        <li role="none">
-          <a href="#features" class="nav-pill" role="menuitem" tabindex="0">Features</a>
+      <ul class="nav-pills">
+        <li>
+          <a href="#features" class="nav-pill">
+            <span class="nav-text">Features</span>
+          </a>
         </li>
-        <li role="none">
-          <a href="#tools" class="nav-pill" role="menuitem" tabindex="0">Tools</a>
+        <li>
+          <a href="#tools" class="nav-pill">
+            <span class="nav-text">Tools</span>
+          </a>
         </li>
-        <li role="none">
-          <a href="#docs" class="nav-pill" role="menuitem" tabindex="0">Documentation</a>
+        <li>
+          <a href="#docs" class="nav-pill">
+            <span class="nav-text">Documentation</span>
+          </a>
         </li>
       </ul>
     </nav>
   </div>
 </header>
 
-<!-- Main Content -->
+<!-- Main Content with focus management for Pablo Sandbox -->
 <main id="main-content" class="main-content" role="main" tabindex="-1">
 
   <!-- Hero Section -->
   <section class="hero-section" aria-labelledby="hero-title">
+    <!-- Enhanced status indicator for Thomson Reuters accessibility standards -->
     <div class="status-indicator" role="status" aria-live="polite" aria-atomic="true">
       <span class="status-dot" aria-hidden="true"></span>
-      <span class="status-text">System active and running</span>
+      <span class="status-text">Pablo Sandbox system active and running</span>
     </div>
 
     <h2 id="hero-title" class="hero-title">
-      Welcome to the UXE Sandbox
+      Welcome to the Pablo Sandbox
     </h2>
 
     <p class="hero-subtitle">
-      A large-scale JavaScript monorepo supporting multiple frontend frameworks with shared platform codebase and product-specific implementations following Thomson Reuters accessibility standards.
+      A large-scale JavaScript monorepo supporting multiple frontend frameworks with shared platform codebase and product-specific implementations following Thomson Reuters Digital Accessibility Policy and WCAG 2.1 AA standards.
     </p>
 
     <div class="cta-container">
@@ -48,72 +60,74 @@
         density="comfortable"
         aria-describedby="docs-description"
         type="button">
-        <span aria-hidden="true">📚</span>
-        View Documentation
+        <span class="icon-text" aria-label="Documentation icon">📚</span>
+        <span class="button-text">View Documentation</span>
       </saf-button>
     </div>
 
-    <!-- Moved descriptions closer to relevant buttons -->
+    <!-- Screen reader descriptions for Pablo Sandbox -->
     <div class="sr-only">
-      <p id="docs-description">Access comprehensive WCAG 2.1 AA accessibility documentation and development guidelines</p>
+      <p id="docs-description">Access comprehensive WCAG 2.1 AA accessibility documentation and Thomson Reuters development guidelines for Pablo Sandbox</p>
     </div>
   </section>
 
-  <!-- Features Section -->
+  <!-- Features Section with enhanced accessibility -->
   <section id="features" class="features-section" aria-labelledby="features-title">
-    <h2 id="features-title" class="section-title">Platform Features</h2>
+    <h2 id="features-title" class="section-title">Pablo Sandbox Platform Features</h2>
     <p class="section-description">
-      Enterprise-grade tools and frameworks designed for scalable, accessible development following Thomson Reuters standards.
+      Enterprise-grade tools and frameworks designed for scalable, accessible development following Thomson Reuters Digital Accessibility Policy and WCAG 2.1 AA compliance.
     </p>
 
-    <div class="features-grid" role="list">
+    <!-- Proper list semantics for features -->
+    <div class="features-grid" role="list" aria-label="Platform features list">
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span class="icon-text">⚡</span>
+          <span class="icon-text" aria-label="Lightning bolt representing speed">⚡</span>
         </div>
         <h3 class="feature-title">Multi-Framework Support</h3>
         <p class="feature-description">
-          Pre-configured Next.js, React, and Angular environments with shared platform codebase and Tailwind CSS integration.
+          Pre-configured Next.js, React, and Angular environments with shared platform codebase, Tailwind CSS integration, and Saffron design tokens.
         </p>
       </article>
 
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span class="icon-text">♿</span>
+          <span class="icon-text" aria-label="Accessibility symbol">♿</span>
         </div>
         <h3 class="feature-title">WCAG 2.1 AA Compliance</h3>
         <p class="feature-description">
-          Built-in accessibility validation with 4.5:1 contrast ratios, keyboard navigation, and real-time compliance checking.
+          Built-in accessibility validation with 4.5:1 contrast ratios, keyboard navigation, screen reader support, and real-time Thomson Reuters compliance checking.
         </p>
       </article>
 
       <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span class="icon-text">🎨</span>
+          <span class="icon-text" aria-label="Design palette representing design system">🎨</span>
         </div>
         <h3 class="feature-title">Saffron Design System</h3>
         <p class="feature-description">
-          Thomson Reuters Saffron Core Styles design tokens ensuring consistent, accessible color schemes and typography.
+          Thomson Reuters Saffron Core Styles design tokens ensuring consistent, accessible color schemes with proper contrast ratios and typography standards.
         </p>
       </article>
 
-      <article class="feature-card" >
+      <article class="feature-card">
         <div class="feature-icon" aria-hidden="true">
-          <span class="icon-text">🔧</span>
+          <span class="icon-text" aria-label="Wrench representing tools">🔧</span>
         </div>
         <h3 class="feature-title">Enterprise Testing Suite</h3>
         <p class="feature-description">
-          Comprehensive testing with Jest, React Testing Library, Redux/Zustand state management, and automated CI/CD workflows.
+          Comprehensive testing with Jest, React Testing Library, Redux/Zustand state management, automated CI/CD workflows, and accessibility validation tools.
         </p>
       </article>
     </div>
   </section>
 
-  <!-- Development Environments Section -->
+  <!-- Development Environments Section with improved grouping -->
   <section id="tools" class="features-section" aria-labelledby="actions-title">
     <h2 id="actions-title" class="section-title">Development Environments</h2>
-    <p class="section-description">Choose your preferred development environment to get started quickly.</p>
+    <p class="section-description">Choose your preferred development environment to get started with Pablo Sandbox following Thomson Reuters standards.</p>
 
+    <!-- Proper button grouping for multiple environments -->
     <div class="cta-container" role="group" aria-labelledby="actions-title">
       <saf-button
         variant="primary"
@@ -121,16 +135,74 @@
         (click)="goToReact()"
         aria-describedby="react-description"
         type="button">
-        <span aria-hidden="true">⚛️</span>
-        React Environment
+        <span class="icon-text" aria-label="React logo">⚛️</span>
+        <span class="button-text">React Environment</span>
       </saf-button>
+
     </div>
 
+    <!-- Enhanced screen reader descriptions for Pablo Sandbox environments -->
     <div class="sr-only">
-      <p id="react-description">Navigate to the React development environment with Redux state management and component library</p>
-      <p id="angular-description">Access the Angular environment with pre-configured testing suite and dependency injection</p>
-      <p id="nextjs-description">Launch the Next.js environment for server-side rendering and static site generation</p>
-      <p id="a11y-description">Run comprehensive WCAG 2.1 AA accessibility validation tests and generate compliance reports</p>
+      <p id="react-description">Navigate to the React development environment with Redux state management, component library, and Thomson Reuters accessibility validation</p>
+      <p id="angular-description">Access the Angular environment with pre-configured testing suite, dependency injection, and WCAG 2.1 AA compliance tools</p>
+      <p id="nextjs-description">Launch the Next.js environment for server-side rendering, static site generation, and Pablo Sandbox optimization</p>
+      <p id="a11y-description">Run comprehensive WCAG 2.1 AA accessibility validation tests and generate Thomson Reuters compliance reports for Pablo Sandbox</p>
     </div>
   </section>
+
+  <!-- Documentation Section for Pablo Sandbox -->
+  <section id="docs" class="features-section" aria-labelledby="docs-title">
+    <h2 id="docs-title" class="section-title">Documentation & Resources</h2>
+    <p class="section-description">Access Pablo Sandbox guides, API documentation, and Thomson Reuters accessibility standards.</p>
+
+    <div class="docs-grid" role="list" aria-label="Documentation resources">
+      <article class="doc-card">
+        <h3 class="doc-title">
+          <a href="/docs/getting-started" class="doc-link">
+            <span class="link-text">Getting Started Guide</span>
+            <span class="visually-hidden"> - Pablo Sandbox setup instructions</span>
+          </a>
+        </h3>
+        <p class="doc-description">Step-by-step setup instructions for all Pablo Sandbox environments and Thomson Reuters standards</p>
+      </article>
+
+      <article class="doc-card">
+        <h3 class="doc-title">
+          <a href="/docs/accessibility" class="doc-link">
+            <span class="link-text">Accessibility Standards</span>
+            <span class="visually-hidden"> - WCAG 2.1 AA compliance for Thomson Reuters</span>
+          </a>
+        </h3>
+        <p class="doc-description">WCAG 2.1 AA compliance guidelines, Thomson Reuters Digital Accessibility Policy, and testing procedures for Pablo Sandbox</p>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer with proper content info role -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-content">
+    <p class="footer-text">&copy; 2025 Thomson Reuters. Pablo Sandbox UXE Platform - WCAG 2.1 AA Compliant.</p>
+    <nav aria-label="Footer navigation" class="footer-nav">
+      <ul class="footer-links">
+        <li>
+          <a href="/privacy" class="footer-link">
+            <span class="link-text">Privacy Policy</span>
+          </a>
+        </li>
+        <li>
+          <a href="/accessibility" class="footer-link">
+            <span class="link-text">Accessibility Statement</span>
+          </a>
+        </li>
+        <li>
+          <a href="/support" class="footer-link">
+            <span class="link-text">Support</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>
 
